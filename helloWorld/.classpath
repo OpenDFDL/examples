@@ -29,7 +29,6 @@
 	<classpathentry kind="lib" path="lib_managed/jars/xerces/xercesImpl/xercesImpl-2.10.0.jar"/>
 	<classpathentry kind="lib" path="lib_managed/jars/xml-apis/xml-apis/xml-apis-1.4.01.jar"/>
 	<classpathentry kind="lib" path="lib_managed/jars/xml-resolver/xml-resolver/xml-resolver-1.2.jar"/>
-	<classpathentry kind="lib" path="target/scala-2.11/helloworld_2.11-0.1-SNAPSHOT.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib_managed/jars/jaxen/jaxen/jaxen-1.1.4.jar"/>
 	<classpathentry kind="output" path="target/scala-2.11/classes"/>
