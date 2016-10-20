@@ -15,6 +15,7 @@ import org.jdom2.transform.XSLTransformer;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 
+import edu.illinois.ncsa.daffodil.japi.Compiler;
 import edu.illinois.ncsa.daffodil.japi.Daffodil;
 import edu.illinois.ncsa.daffodil.japi.DataProcessor;
 import edu.illinois.ncsa.daffodil.japi.Diagnostic;
@@ -45,7 +46,7 @@ public class HelloWorld {
 		//
 		// First compile the DFDL Schema
 		//
-		edu.illinois.ncsa.daffodil.japi.Compiler c = Daffodil.compiler();
+		Compiler c = Daffodil.compiler();
 		c.setValidateDFDLSchemas(true); // makes sure the DFDL schema is valid
 										// itself.
 		File schemaFile = new File(schemaFilePath);
