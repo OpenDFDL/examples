@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="src" path="src/test/resources"/>
+	<classpathentry kind="lib" path="lib_managed/bundles/org.scala-lang.modules/scala-parser-combinators_2.11/scala-parser-combinators_2.11-1.0.4.jar"/>
+	<classpathentry kind="lib" path="lib_managed/bundles/org.scala-lang.modules/scala-xml_2.11/scala-xml_2.11-1.0.4.jar"/>
+	<classpathentry kind="lib" path="lib_managed/bundles/org.scala-lang.modules/scala-xml_2.11/scala-xml_2.11-1.0.5.jar"/>
+	<classpathentry kind="lib" path="lib_managed/jars/com.ibm.icu/icu4j/icu4j-51.1.jar"/>
+	<classpathentry kind="lib" path="lib_managed/jars/commons-io/commons-io/commons-io-2.4.jar"/>
+	<classpathentry kind="lib" path="lib_managed/jars/edu.illinois.ncsa/daffodil-core_2.11/daffodil-core_2.11-2.0.0-rc1.jar"/>
+	<classpathentry kind="lib" path="lib_managed/jars/edu.illinois.ncsa/daffodil-io_2.11/daffodil-io_2.11-2.0.0-rc1.jar"/>
+	<classpathentry kind="lib" path="lib_managed/jars/edu.illinois.ncsa/daffodil-japi_2.11/daffodil-japi_2.11-2.0.0-rc1.jar"/>
+	<classpathentry kind="lib" path="lib_managed/jars/edu.illinois.ncsa/daffodil-lib_2.11/daffodil-lib_2.11-2.0.0-rc1.jar"/>
+	<classpathentry kind="lib" path="lib_managed/jars/edu.illinois.ncsa/daffodil-macro-lib_2.11/daffodil-macro-lib_2.11-2.0.0-rc1.jar"/>
+	<classpathentry kind="lib" path="lib_managed/jars/edu.illinois.ncsa/daffodil-runtime1_2.11/daffodil-runtime1_2.11-2.0.0-rc1.jar"/>
+	<classpathentry kind="lib" path="lib_managed/jars/edu.illinois.ncsa/daffodil-runtime1-unparser_2.11/daffodil-runtime1-unparser_2.11-2.0.0-rc1.jar"/>
+	<classpathentry kind="lib" path="lib_managed/jars/jline/jline/jline-2.12.1.jar"/>
+	<classpathentry kind="lib" path="lib_managed/jars/jline/jline/jline-2.12.jar"/>
+	<classpathentry kind="lib" path="lib_managed/jars/org.fusesource.jansi/jansi/jansi-1.11.jar"/>
+	<classpathentry kind="lib" path="lib_managed/jars/org.jdom/jdom2/jdom2-2.0.5.jar" sourcepath="lib_managed/srcs/org.jdom/jdom2/jdom2-2.0.5-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/helloWorld/lib_managed/docs/org.jdom/jdom2/jdom2-2.0.5-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib_managed/jars/org.rogach/scallop_2.11/scallop_2.11-0.9.5.jar"/>
+	<classpathentry kind="lib" path="lib_managed/jars/org.scala-lang/scala-compiler/scala-compiler-2.11.7.jar"/>
+	<classpathentry kind="lib" path="lib_managed/jars/org.scala-lang/scala-library/scala-library-2.11.7.jar"/>
+	<classpathentry kind="lib" path="lib_managed/jars/org.scala-lang/scala-reflect/scala-reflect-2.11.7.jar"/>
+	<classpathentry kind="lib" path="lib_managed/jars/xerces/xercesImpl/xercesImpl-2.10.0.jar"/>
+	<classpathentry kind="lib" path="lib_managed/jars/xml-apis/xml-apis/xml-apis-1.4.01.jar"/>
+	<classpathentry kind="lib" path="lib_managed/jars/xml-resolver/xml-resolver/xml-resolver-1.2.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib_managed/jars/jaxen/jaxen/jaxen-1.1.4.jar"/>
+	<classpathentry kind="output" path="target/scala-2.11/classes"/>
+</classpath>
