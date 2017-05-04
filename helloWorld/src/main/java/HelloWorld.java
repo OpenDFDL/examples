@@ -22,6 +22,7 @@ import edu.illinois.ncsa.daffodil.japi.Diagnostic;
 import edu.illinois.ncsa.daffodil.japi.ParseResult;
 import edu.illinois.ncsa.daffodil.japi.ProcessorFactory;
 import edu.illinois.ncsa.daffodil.japi.UnparseResult;
+import edu.illinois.ncsa.daffodil.japi.infoset.JDOMInfosetOutputter;
 
 /**
  * Demonstrates using the Daffodil DFDL processor to
@@ -68,7 +69,17 @@ public class HelloWorld {
 		java.io.File file = new File(dataFilePath);
 		java.io.FileInputStream fis = new java.io.FileInputStream(file);
 		java.nio.channels.ReadableByteChannel rbc = java.nio.channels.Channels.newChannel(fis);
-		ParseResult res = dp.parse(rbc);
+		//
+		// Setup JDOM outputter
+		// 
+		JDOMInfosetOutputter outputter = new JDOMInfosetOutputter();
+				
+	    // Do the parse
+		//
+		ParseResult res = dp.parse(rbc, outputter);
+		
+		// Check for errors
+		//
 		boolean err = res.isError();
 		if (err) {
 			// didn't parse the data. Must be diagnostic of some sort.
@@ -78,11 +89,16 @@ public class HelloWorld {
 			}
 			System.exit(2); 
 		}
+		
+		Document doc = outputter.getResult();
 		//
 		// if we get here, we have a parsed infoset result!
 		// Let's print the XML infoset.
 		//
-		Document doc = res.result();
+		// Note that if we had only wanted this text, we could have used
+		// a different outputter to create XML text directly,
+		// but below we're going to transform this JDOM tree.
+		//
 		XMLOutputter xo = new XMLOutputter(org.jdom2.output.Format.getPrettyFormat());
 		xo.output(doc, System.out);
 
