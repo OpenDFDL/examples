@@ -23,6 +23,7 @@ import edu.illinois.ncsa.daffodil.japi.ParseResult;
 import edu.illinois.ncsa.daffodil.japi.ProcessorFactory;
 import edu.illinois.ncsa.daffodil.japi.UnparseResult;
 import edu.illinois.ncsa.daffodil.japi.infoset.JDOMInfosetOutputter;
+import edu.illinois.ncsa.daffodil.japi.infoset.JDOMInfosetInputter;
 
 /**
  * Demonstrates using the Daffodil DFDL processor to
@@ -153,7 +154,8 @@ public class HelloWorld {
 
 		java.io.ByteArrayOutputStream bos = new java.io.ByteArrayOutputStream();
 		java.nio.channels.WritableByteChannel wbc = java.nio.channels.Channels.newChannel(bos);
-		UnparseResult res2 = dp.unparse(wbc, doc2);
+		JDOMInfosetInputter inputter = new JDOMInfosetInputter(doc2);
+		UnparseResult res2 = dp.unparse(inputter, wbc);
 		err = res2.isError();
 
 		if (err) {
