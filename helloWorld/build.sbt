@@ -14,11 +14,11 @@ scalaVersion in ThisBuild := "2.11.7"
 resolvers in ThisBuild += "NCSA Sonatype Releases" at "https://opensource.ncsa.illinois.edu/nexus/content/repositories/releases"
 
 //
-// Below, change 2.0.0-rc1 to the version of daffodil you want to use
+// Below, change 2.0.0-rc3 to the version of daffodil you want to use
 //
 
 libraryDependencies in ThisBuild := Seq(
-  "edu.illinois.ncsa" %% "daffodil-japi" % "2.0.0-SNAPSHOT",
+  "edu.illinois.ncsa" %% "daffodil-japi" % "2.0.0-rc3",
   "jaxen" % "jaxen" % "1.1.4"
 )
 
