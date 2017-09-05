@@ -18,7 +18,7 @@ resolvers in ThisBuild += "NCSA Sonatype Releases" at "https://opensource.ncsa.i
 //
 
 libraryDependencies in ThisBuild := Seq(
-  "edu.illinois.ncsa" %% "daffodil-japi" % "2.0.0-rc3",
+  "edu.illinois.ncsa" %% "daffodil-japi" % "2.0.0",
   "jaxen" % "jaxen" % "1.1.4"
 )
 
