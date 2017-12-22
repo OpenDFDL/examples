@@ -22,8 +22,8 @@ import edu.illinois.ncsa.daffodil.japi.Diagnostic;
 import edu.illinois.ncsa.daffodil.japi.ParseResult;
 import edu.illinois.ncsa.daffodil.japi.ProcessorFactory;
 import edu.illinois.ncsa.daffodil.japi.UnparseResult;
-import edu.illinois.ncsa.daffodil.japi.infoset.JDOMInfosetOutputter;
 import edu.illinois.ncsa.daffodil.japi.infoset.JDOMInfosetInputter;
+import edu.illinois.ncsa.daffodil.japi.infoset.JDOMInfosetOutputter;
 
 /**
  * Demonstrates using the Daffodil DFDL processor to
@@ -62,7 +62,14 @@ public class HelloWorld {
 			System.exit(1);
 		}
 		DataProcessor dp = pf.onPath("/");
-
+		if (dp.isError()) {
+			// didn't compile schema. Must be diagnostic of some sort.
+			List<Diagnostic> diags = dp.getDiagnostics();
+			for (Diagnostic d : diags) {
+				System.err.println(d.getSomeMessage());
+			}
+			System.exit(1);
+		}
 		//
 		// Parse - parse data to XML
 		//

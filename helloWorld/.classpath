@@ -6,7 +6,6 @@
 	<classpathentry kind="lib" path="lib_managed/bundles/org.scala-lang.modules/scala-xml_2.11/scala-xml_2.11-1.0.4.jar"/>
 	<classpathentry kind="lib" path="lib_managed/jars/com.ibm.icu/icu4j/icu4j-51.1.jar"/>
 	<classpathentry kind="lib" path="lib_managed/jars/jline/jline/jline-2.12.1.jar"/>
-	<classpathentry kind="lib" path="lib_managed/jars/org.rogach/scallop_2.11/scallop_2.11-0.9.5.jar"/>
 	<classpathentry kind="lib" path="lib_managed/jars/org.scala-lang/scala-compiler/scala-compiler-2.11.7.jar"/>
 	<classpathentry kind="lib" path="lib_managed/jars/org.scala-lang/scala-library/scala-library-2.11.7.jar"/>
 	<classpathentry kind="lib" path="lib_managed/jars/org.scala-lang/scala-reflect/scala-reflect-2.11.7.jar"/>

@@ -10,6 +10,6 @@ You will need an internet connection to pull down the dependent libraries, inclu
 
 With those installed you can type 'sbt run' and it will download all dependencies as jar files, and then compile and run the HelloWorld.java program.
 
-If you would like the source and javadoc jars for the dependencies downloaded also, then type 'sbt update-classifiers'.
+If you would like the source and javadoc jars for the dependencies downloaded also, then type 'sbt updateClassifiers'.
 
 The jar files are cached in the lib_managed/ directory (which is removed by 'sbt clean')

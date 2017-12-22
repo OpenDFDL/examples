@@ -8,6 +8,7 @@
 
 scalaVersion in ThisBuild := "2.11.7"
 
+mainClass in (Compile,run) := Some("HelloWorld")
 //
 // This is where daffodil jars are resolved
 //
