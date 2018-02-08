@@ -15,15 +15,15 @@ import org.jdom2.transform.XSLTransformer;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 
-import edu.illinois.ncsa.daffodil.japi.Compiler;
-import edu.illinois.ncsa.daffodil.japi.Daffodil;
-import edu.illinois.ncsa.daffodil.japi.DataProcessor;
-import edu.illinois.ncsa.daffodil.japi.Diagnostic;
-import edu.illinois.ncsa.daffodil.japi.ParseResult;
-import edu.illinois.ncsa.daffodil.japi.ProcessorFactory;
-import edu.illinois.ncsa.daffodil.japi.UnparseResult;
-import edu.illinois.ncsa.daffodil.japi.infoset.JDOMInfosetInputter;
-import edu.illinois.ncsa.daffodil.japi.infoset.JDOMInfosetOutputter;
+import org.apache.daffodil.japi.Compiler;
+import org.apache.daffodil.japi.Daffodil;
+import org.apache.daffodil.japi.DataProcessor;
+import org.apache.daffodil.japi.Diagnostic;
+import org.apache.daffodil.japi.ParseResult;
+import org.apache.daffodil.japi.ProcessorFactory;
+import org.apache.daffodil.japi.UnparseResult;
+import org.apache.daffodil.japi.infoset.JDOMInfosetInputter;
+import org.apache.daffodil.japi.infoset.JDOMInfosetOutputter;
 
 /**
  * Demonstrates using the Daffodil DFDL processor to
