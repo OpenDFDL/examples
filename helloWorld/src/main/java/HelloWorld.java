@@ -24,6 +24,7 @@ import org.apache.daffodil.japi.ProcessorFactory;
 import org.apache.daffodil.japi.UnparseResult;
 import org.apache.daffodil.japi.infoset.JDOMInfosetInputter;
 import org.apache.daffodil.japi.infoset.JDOMInfosetOutputter;
+import org.apache.daffodil.japi.io.InputSourceDataInputStream;
 
 /**
  * Demonstrates using the Daffodil DFDL processor to
@@ -76,7 +77,7 @@ public class HelloWorld {
 		System.out.println("**** Parsing data into XML *****");
 		java.io.File file = new File(dataFilePath);
 		java.io.FileInputStream fis = new java.io.FileInputStream(file);
-		java.nio.channels.ReadableByteChannel rbc = java.nio.channels.Channels.newChannel(fis);
+		InputSourceDataInputStream dis = new InputSourceDataInputStream(fis);
 		//
 		// Setup JDOM outputter
 		// 
@@ -84,7 +85,7 @@ public class HelloWorld {
 				
 	    // Do the parse
 		//
-		ParseResult res = dp.parse(rbc, outputter);
+		ParseResult res = dp.parse(dis, outputter);
 		
 		// Check for errors
 		//

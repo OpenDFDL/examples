@@ -6,7 +6,7 @@
 // that version.
 //
 
-scalaVersion in ThisBuild := "2.11.7"
+scalaVersion in ThisBuild := "2.12.6"
 
 mainClass in (Compile,run) := Some("HelloWorld")
 
@@ -17,7 +17,7 @@ mainClass in (Compile,run) := Some("HelloWorld")
 
 
 libraryDependencies in ThisBuild := Seq(
-  "org.apache.daffodil" %% "daffodil-japi" % "2.1.0",
+  "org.apache.daffodil" %% "daffodil-japi" % "2.2.0",
   "jaxen" % "jaxen" % "1.1.4"
 )
 
