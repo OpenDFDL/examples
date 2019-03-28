@@ -25,10 +25,9 @@ limitations under the License.
 
   <xsl:template match="/">
     <!-- Standard DFDL schema boilerplate defining delimited text data -->
-    <xs:schema
-      xmlns:xs="http://www.w3.org/2001/XMLSchema"
-      xmlns:dfdl="http://www.ogf.org/dfdl/dfdl-1.0/">
+    <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:dfdl="http://www.ogf.org/dfdl/dfdl-1.0/">
 
+      <!-- DFDL default properties -->
       <xs:include schemaLocation="org/apache/daffodil/xsd/DFDLGeneralFormat.dfdl.xsd" />
       <xs:annotation>
         <xs:appinfo source="http://www.ogf.org/dfdl/">
@@ -37,10 +36,10 @@ limitations under the License.
       </xs:annotation>
 
       <!--
-        TCSVData is an unbounded sequence or rows. Each row is separated by
+        TCSVPayload is an unbounded sequence or rows. Each row is separated by
         a newline. Each Row is a sequence of fields separated by a comma.
       -->
-      <xs:element name="TCSVData">
+      <xs:element name="TCSVPayload">
         <xs:complexType>
           <xs:sequence dfdl:separator="%NL;">
             <xs:element name="Row" maxOccurs="unbounded">

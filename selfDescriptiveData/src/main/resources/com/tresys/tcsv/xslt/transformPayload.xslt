@@ -23,8 +23,8 @@ limitations under the License.
 
   <xsl:output method="xml" indent="yes" />
 
-  <!-- Sort all the Rows by the Name elements -->
-  <xsl:template match="/TCSVData">
+  <!-- Sort all the children of TCSVPayload (i.e. the Rows) by the Name elements -->
+  <xsl:template match="/TCSVPayload">
     <xsl:copy>
       <xsl:apply-templates>
         <xsl:sort select="Name" />
@@ -33,7 +33,7 @@ limitations under the License.
   </xsl:template>
 
   <!-- Remove any Rows that have a Name element with the value "Eve" -->
-  <xsl:template match="*[Name='Eve']" />
+  <xsl:template match="Row[Name='Eve']" />
 
   <!-- Copy all other nodes -->
   <xsl:template match="@*|node()">

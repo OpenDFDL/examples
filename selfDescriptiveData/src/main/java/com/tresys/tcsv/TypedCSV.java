@@ -110,9 +110,9 @@ public class TypedCSV {
 
 	public static void main(String[] args) throws IOException, URISyntaxException, XSLTransformException {
 
-		URL headerDFDLSchema = TypedCSV.class.getResource("/com/tresys/tcsv/xsd/tcsvheader.dfdl.xsd");
+		URL headerDFDLSchema = TypedCSV.class.getResource("/com/tresys/tcsv/xsd/tcsvHeader.dfdl.xsd");
 		URL headerXSLT = TypedCSV.class.getResource("/com/tresys/tcsv/xslt/transformHeader.xslt");
-		URL dataXSLT = TypedCSV.class.getResource("/com/tresys/tcsv/xslt/transformData.xslt");
+		URL payloadXSLT = TypedCSV.class.getResource("/com/tresys/tcsv/xslt/transformPayload.xslt");
 		URL inputData = TypedCSV.class.getResource("/data/data.tcsv");
 
 		// Compile the header DFDL schema
@@ -130,8 +130,8 @@ public class TypedCSV {
 		// Create a Daffodil input stream for the data. The
 		// InputSourceDataInputStream saves the position where a parse ends so
 		// that another parse can pick up where the previous one left off.
-		InputStream fis = inputData.openStream();
-		InputSourceDataInputStream dis = new InputSourceDataInputStream(fis);
+		InputStream is = inputData.openStream();
+		InputSourceDataInputStream dis = new InputSourceDataInputStream(is);
 
 		// Output the header infoset as a JDOM tree
 		JDOMInfosetOutputter headerOutputter = new JDOMInfosetOutputter();
@@ -151,42 +151,42 @@ public class TypedCSV {
 		Document headerDoc = headerOutputter.getResult();
 		outputDocument("Parsed Header Infoset", headerDoc, System.out);
 
-		// Transform the header XML to a new DFDL schema that describes the data
+		// Transform the header XML to a new DFDL schema that describes the payload
 		XSLTransformer headerTR = new XSLTransformer(headerXSLT.openStream());
-		Document dataSchemaDoc = headerTR.transform(headerDoc);
-		outputDocument("Generated Data Schema", dataSchemaDoc, System.out);
+		Document payloadSchemaDoc = headerTR.transform(headerDoc);
+		outputDocument("Generated Payload Schema", payloadSchemaDoc, System.out);
 
 		// Save the generated schema to a temporary location
 		File tmpSchema = File.createTempFile("tcsv-", ".dfdl.xsd");
 		FileOutputStream fos = new FileOutputStream(tmpSchema);
-		outputDocument(null, dataSchemaDoc, fos);
+		outputDocument(payloadSchemaDoc, fos);
 		fos.close();
 
 		// Compile the temporary schema
-		URI dataDFDLSchema = tmpSchema.toURI();
-		DataProcessor dataDP = compileSchema(dataDFDLSchema);
+		URI payloadDFDLSchema = tmpSchema.toURI();
+		DataProcessor payloadDP = compileSchema(payloadDFDLSchema);
 		tmpSchema.delete();
 
-		// Output the data infoset as a JDOM Document
-		JDOMInfosetOutputter dataOutputter = new JDOMInfosetOutputter();
+		// Output the payload infoset as a JDOM Document
+		JDOMInfosetOutputter payloadOutputter = new JDOMInfosetOutputter();
 
-		// Parse the rest of the data using the generated schema, starting
+		// Parse the rest of the payload using the generated schema, starting
 		// where the header parse left off
-		ParseResult dataPR = dataDP.parse(dis, dataOutputter);
-		if (dataPR.isError()) {
-			// Failed to parse the data
-			reportDiagnostics(dataPR);
+		ParseResult payloadPR = payloadDP.parse(dis, payloadOutputter);
+		if (payloadPR.isError()) {
+			// Failed to parse the payload
+			reportDiagnostics(payloadPR);
 			System.exit(1);
 		}
 
 		// Get the resulting JDOM document
-		Document dataDoc = dataOutputter.getResult();
-		outputDocument("Parsed Data Infoset", dataDoc, System.out);
+		Document payloadDoc = payloadOutputter.getResult();
+		outputDocument("Parsed Payload Infoset", payloadDoc, System.out);
 
-		// Transform the data XML using an XSLT, performs filtering and sorting
-		XSLTransformer dataTR = new XSLTransformer(dataXSLT.openStream());
-		Document dataDocSorted = dataTR.transform(dataDoc);
-		outputDocument("Transformed Data Infoset", dataDocSorted, System.out);
+		// Transform the payload XML using an XSLT, performs filtering and sorting
+		XSLTransformer payloadTR = new XSLTransformer(payloadXSLT.openStream());
+		Document payloadDocTR = payloadTR.transform(payloadDoc);
+		outputDocument("Transformed Payload Infoset", payloadDocTR, System.out);
 
 		System.out.println("\n========== Unparsed Data ==========");
 
@@ -202,12 +202,12 @@ public class TypedCSV {
 			System.exit(1);
 		}
 
-		// Unparse the data JDOM document
-		JDOMInfosetInputter dataInputter = new JDOMInfosetInputter(dataDocSorted);
-		UnparseResult dataUR = dataDP.unparse(dataInputter, output);
-		if (dataUR.isError()) {
+		// Unparse the payload JDOM document
+		JDOMInfosetInputter payloadInputter = new JDOMInfosetInputter(payloadDocTR);
+		UnparseResult payloadUR = payloadDP.unparse(payloadInputter, output);
+		if (payloadUR.isError()) {
 			// Failed to unparse the header
-			reportDiagnostics(dataUR);
+			reportDiagnostics(payloadUR);
 			System.exit(1);
 		}
 
