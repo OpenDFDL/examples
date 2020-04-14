@@ -24,6 +24,7 @@ import org.apache.daffodil.japi.ProcessorFactory;
 import org.apache.daffodil.japi.UnparseResult;
 import org.apache.daffodil.japi.infoset.JDOMInfosetInputter;
 import org.apache.daffodil.japi.infoset.JDOMInfosetOutputter;
+import org.apache.daffodil.japi.infoset.JsonInfosetOutputter;
 import org.apache.daffodil.japi.io.InputSourceDataInputStream;
 
 /**
@@ -113,6 +114,22 @@ public class HelloWorld {
 
 		// If all you need to do is parse things to XML, then that's it.
 
+		// Let's display it as JSON also for those that need or prefer JSON
+		{
+			System.out.println("**** Parsing data into JSON ****");
+			InputSourceDataInputStream dis2 = new InputSourceDataInputStream(new java.io.FileInputStream(file));
+			JsonInfosetOutputter jo = new JsonInfosetOutputter(System.out, true);
+			ParseResult res2 = dp.parse(dis2, jo);
+			boolean err2 = res2.isError();
+			if (err2) {
+				// didn't parse the data. Must be diagnostic of some sort.
+				List<Diagnostic> diags = res.getDiagnostics();
+				for (Diagnostic d : diags) {
+					System.err.println(d.getSomeMessage());
+				}
+				System.exit(2);
+			}
+		}
 		//
 		// XPATH - use it to access the data
 		//
