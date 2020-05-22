@@ -1,6 +1,8 @@
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -39,20 +41,17 @@ import org.apache.daffodil.japi.io.InputSourceDataInputStream;
  */
 public class HelloWorld {
 
-    public static void main(String[] args) throws IOException, XSLTransformException {
+    public static void main(String[] args) throws IOException, XSLTransformException, URISyntaxException {
 
-        String rootDir = "./";
-        String testDir = rootDir
-                + "src/test/resources/";
-        String schemaFilePath = testDir + "helloWorld.dfdl.xsd";
-        String dataFilePath = testDir + "helloWorld.dat";
+        URL schemaFileURL = HelloWorld.class.getResource("/helloWorld.dfdl.xsd");
+        URL dataFileURL = HelloWorld.class.getResource("/helloWorld.dat");
+        URL xsltFileURL = HelloWorld.class.getResource("/helloWorld.xslt");
 
         //
         // First compile the DFDL Schema
         //
         Compiler c = Daffodil.compiler();
-        File schemaFile = new File(schemaFilePath);
-        ProcessorFactory pf = c.compileFile(schemaFile);
+        ProcessorFactory pf = c.compileSource(schemaFileURL.toURI());
         if (pf.isError()) {
             // didn't compile schema. Must be diagnostic of some sort. 
             List<Diagnostic> diags = pf.getDiagnostics();
@@ -74,18 +73,17 @@ public class HelloWorld {
         // Parse - parse data to XML
         //
         System.out.println("**** Parsing data into XML *****");
-        java.io.File file = new File(dataFilePath);
-        java.io.FileInputStream fis = new java.io.FileInputStream(file);
-        InputSourceDataInputStream dis = new InputSourceDataInputStream(fis);
+        java.io.InputStream is = dataFileURL.openStream();
+        InputSourceDataInputStream dis = new InputSourceDataInputStream(is);
         //
         // Setup JDOM outputter
         // 
         JDOMInfosetOutputter outputter = new JDOMInfosetOutputter();
-                
+
         // Do the parse
         //
         ParseResult res = dp.parse(dis, outputter);
-        
+
         // Check for errors
         //
         boolean err = res.isError();
@@ -115,7 +113,8 @@ public class HelloWorld {
         // Let's display it as JSON also for those that need or prefer JSON
         {
             System.out.println("**** Parsing data into JSON ****");
-            InputSourceDataInputStream dis2 = new InputSourceDataInputStream(new java.io.FileInputStream(file));
+            java.io.InputStream is2 = dataFileURL.openStream();
+            InputSourceDataInputStream dis2 = new InputSourceDataInputStream(is2);
             JsonInfosetOutputter jo = new JsonInfosetOutputter(System.out, true);
             ParseResult res2 = dp.parse(dis2, jo);
             boolean err2 = res2.isError();
@@ -148,9 +147,7 @@ public class HelloWorld {
         //
         System.out.println("**** Transform with XSLT *****");
 
-        String xsltFilePath = testDir + "helloWorld.xslt";
-
-        XSLTransformer tr = new XSLTransformer(xsltFilePath);
+        XSLTransformer tr = new XSLTransformer(xsltFileURL.openStream());
         Document doc2 = tr.transform(doc);
         xo.output(doc2, System.out); // display it so we see the change.
 
