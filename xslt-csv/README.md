@@ -30,3 +30,7 @@ If you install java (version 8 or higher), and setup the classpath properly then
 
 Q: Do I need to use saxon? Will the Java built-in XSLT processor not work?
 A: Any XSLT processor that supports XSLT 2.0 will work. Verify that the XSLT processor in Java is XSLT 2.0 capable. The way the extension function is defined and provided to the XSLT processor may be different from the way Saxon does it. 
+
+== Thanks/Credits
+
+This idea of calling Daffodil directly from XSLT and the original version of this example come from Roger Costello of MITRE Corp.
