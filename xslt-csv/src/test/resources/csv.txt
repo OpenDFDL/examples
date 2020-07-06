@@ -1,0 +1,9 @@
+Year,Make,Model,Description,Price
+1997,Chevy,E350,"ac, abs, moon",2999.99
+1999,Chevy,Venture Extended Edition,,4900.00
+2000,Chevy,Venture Extended Edition,Very Large,5000.00
+1996,Jeep,Grand Cherokee,"MUST SELL! air, moon roof, loaded",4799.00
+2019,Toyota,Avalon,"He said ""Great car"" to the dealer",40000.00
+1969,Ford,Mustang,"A classic
+car!",1600.00
+1996,Citroen,Berlingo,A roomy small car,23000.00

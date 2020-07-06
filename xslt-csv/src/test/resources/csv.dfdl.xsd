@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:dfdl="http://www.ogf.org/dfdl/dfdl-1.0/" xmlns:fn="http://www.w3.org/2005/xpath-functions">
+
+	<!-- 
+		Author: Roger L. Costello
+		Date: December 2019
+    -->
+
+	<!-- 
+		This DFDL schema describes the CSV file format, as specified
+		in RFC 4180. The RFC says this:
+
+		TEXTDATA =  %x20-21 / %x23-2B / %x2D-7E
+
+		That means, to be standards-compliant, a CSV file must only contain
+		printable ASCII characters. That seemed a bit limiting so I contacted
+		the editor of the RFC, Yakov Shafranovich, and asked him about that.
+		He kindly responded and said this: The original RFC was set to ASCII 
+		only but when RFC 7111 was published, the media type was updated to 
+		use UTF-8. See:
+        https://lists.w3.org/Archives/Public/public-csv-wg/2014Oct/0115.html
+        https://www.iana.org/assignments/media-types/text/csv
+
+        The first reference says: While RFC 4180 does mandate ASCII, for 
+        standards purposes this has been changed and the default now is 
+        in fact UTF-8.
+        
+        Okay, so CSV can contain more than just ASCII characters. Phew!
+        
+        The second reference says: The "charset" parameter specifies the 
+        charset employed by the CSV content.
+        
+        Okay, so I parameterized the below DFDL schema: when you run a DFDL
+        processor on this schema, feed in a value for the charset parameter.
+        The allowable values are UTF-8 or ASCII (case sensitive!).
+        
+        I just found another RFC for CSV: RFC 7111. Its introduction says this:
+        This memo updates the text/csv media type defined in RFC 4180 by defining 
+        URI fragment identifiers for text/csv MIME entities.
+        
+        Hmm, I better read that document ... Okay, I read RFC 7111. It doesn't
+        modify the CSV format, except to say that a charset parameter may be
+        used to specify the charset employed by the CSV content. The RFC  
+        describes how to reference portions of a CSV file using fragment
+        identifiers on a URL. That's not relevant to describing the CSV
+        format. 
+		
+		Why did I create a DFDL schema for CSV? Last month I was browsing
+		the Web and came across a web site 
+		(http://www.hexacorn.com/blog/2019/09/06/state-machine-vs-regex/)
+		that said something very interesting:
+		
+		    The enlightenment came from reading the actual CSV specification. 
+		    When you skim through it you quickly realize two things:
+		      1. No one ever reads stuff like this anymore
+		      2. It’s unlikely that anyone covers all angles 
+		         while saving files in this format
+           The result is that we have many badly implemented CSV parsers out 
+           there. You also realize why: this format is NOT as simple as many 
+           people think. Quite the opposite, even today, after so many years, 
+           even Excel (which is actually including a lot of margin for error!) 
+           still fails to process some of these files correctly…
+        
+        After reading that I thought, "Hey, using DFDL I should be able to
+        write a parser that covers all angles of the CSV file format." And I did!
+        
+		The following DFDL schema precisely describes the CSV data format.
+		Here's a summary of what this DFDL schema expresses:
+		1. A CVS file consists of a one or more records separated by newlines.
+		2. The last record may or may not have an ending newline.
+		3. A record consists of one or more fields, separated by commas (or some other symbol).
+		4. Spaces are considered part of a field and may not be ignored.
+		5. A CSV file may or may not have a header. If present, it is 
+		   the first line. A header consists of one or more names, separated 
+		   by commas. The header is separated from the records by a newline.
+		6. A "header" parameter with value "present" means there is a header, 
+		   "absent" means there is no header.
+		7. Each record should contain the same number of fields as names in 
+		   the header, if present. If the header is not present, then each
+		   record should contain the same number of fields as the other records.
+		8. A field may be wrapped in double quotes.
+		9. Commas in a field that is wrapped in double quotes are ignored, i.e.
+		   the commas are not to be treated as field separators.
+		10. Newlines in a field that is wrapped in double quotes are ignored, i.e.
+		   the newlines are not to be treated as record separators.
+		11. A double quote within a field must be escaped by a double quote.
+		12. A "charset" parameter with value "UTF-8" means the file may contain
+		    any UTF-8 character, "ASCII" means the file may only contain ASCII
+		    characters.
+    -->
+
+	<xs:annotation>
+		<xs:appinfo source="http://www.ogf.org/dfdl/">
+			<dfdl:format textBidi="no" floating="no" encodingErrorPolicy="replace"
+				outputNewLine="%CR;%LF;" leadingSkip="0" trailingSkip="0" alignment="1"
+				alignmentUnits="bytes" textPadKind="none" textTrimKind="none"
+				truncateSpecifiedLengthString="no" escapeSchemeRef="" textNumberRounding="explicit"
+				textNumberRoundingMode="roundUnnecessary" textNumberRoundingIncrement="1"
+				textStandardZeroRep="" textNumberCheckPolicy="strict" choiceLengthKind="implicit"
+				calendarCheckPolicy="strict" calendarLanguage="en" representation="text"
+				encoding="UTF-8" lengthKind="delimited" separator="" initiator="" terminator=""
+				ignoreCase="yes" occursCountKind="fixed" sequenceKind="ordered"
+				initiatedContent="no" separatorSuppressionPolicy="trailingEmptyStrict"
+				emptyValueDelimiterPolicy="both"/>
+			<!-- 
+				Commas in a field are escaped by wrapping the field
+				in double quotes. A quote in a field is escaped by
+				preceding it with a double quote. 
+				
+				A field may span multiple lines, i.e., it may 
+				contain newlines. The newline separator is used 
+				to separate rows and is in-scope for the field. 
+				Therefore, newlines in a field that references 
+				this escapeSchema should be ignored. Daffodil
+				properly parses such fields but on unparsing it
+				neglects to reinsert the quotes around the field.
+				The workaround is to set extraEscapedCharacters
+				to linefeed (%LF;).
+			-->
+			<dfdl:defineEscapeScheme name="Quotes">
+				<dfdl:escapeScheme 
+					escapeKind="escapeBlock" 
+					escapeBlockStart='"' 
+					escapeBlockEnd='"'
+					escapeEscapeCharacter='"' 
+					extraEscapedCharacters="%LF;"
+					generateEscapeBlock="whenNeeded"/>
+			</dfdl:defineEscapeScheme>
+		</xs:appinfo>
+	</xs:annotation>
+
+	<xs:element name="csv">
+		<xs:complexType>
+			<xs:sequence dfdl:separator="%NL;" dfdl:separatorPosition="infix">
+				<xs:element name="header" minOccurs="0" dfdl:occursCountKind="implicit">
+					<xs:complexType>
+						<xs:sequence dfdl:separator="," dfdl:separatorPosition="infix">
+							<xs:element name="name" maxOccurs="unbounded" type="xs:string"
+								dfdl:occursCountKind="implicit"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="record" maxOccurs="unbounded" dfdl:occursCountKind="implicit">
+					<xs:complexType>
+						<xs:sequence 
+							dfdl:separator="," 
+							dfdl:separatorPosition="infix"
+						>
+							<xs:element name="field" maxOccurs="unbounded" type="xs:string" nillable="true" 
+								dfdl:nilKind="literalValue" 
+								dfdl:nilValue="%ES;"
+								dfdl:escapeSchemeRef="Quotes" 
+								dfdl:occursCountKind="implicit"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+</xs:schema>
