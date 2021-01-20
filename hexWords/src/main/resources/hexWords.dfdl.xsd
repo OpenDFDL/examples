@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://example.com/dfdl/hexWords/"
+           targetNamespace="http://example.com/dfdl/hexWords/"
+           xmlns:dfdl="http://www.ogf.org/dfdl/dfdl-1.0/"
+           xmlns:fn="http://www.w3.org/2005/xpath-functions"
+           xmlns:daf="urn:ogf:dfdl:2013:imp:daffodil.apache.org:2018:ext">
+
+  <xs:include schemaLocation="org/apache/daffodil/xsd/DFDLGeneralFormat.dfdl.xsd"/>
+
+  <xs:annotation>
+    <xs:appinfo source="http://www.ogf.org/dfdl/">
+
+      <dfdl:format ref="GeneralFormat"
+                   representation="binary" encoding="X-DFDL-HEX-LSBF" lengthKind="implicit"
+                   lengthUnits="bits" alignmentUnits="bits"
+                   byteOrder="littleEndian" bitOrder="leastSignificantBitFirst"/>
+
+    </xs:appinfo>
+  </xs:annotation>
+
+  <!-- <![CDATA[
+
+   hexWords is a very tiny schema designed to illustrate a number of processing issues that
+   can arise with binary data.
+
+   Each word is a 4 bit length field, followed by a "word" consisting of that number of 4-bit
+   hex nibbles. Hence, one text can be from 0 to 15 nibbles long.
+
+   Excepting that the bit-order is least-significant bit first.
+
+   Example of 3 well formed words in hex
+
+   Bytes position  8  7  6  5  4  3  2  1
+                  CD CA 40 CD AB 5A BB A4
+
+   Starting from the left we have these words (the nibbles are right to left i.e., backwards
+   from normal reading order.
+
+   Those words are ABBA BADC0 ACDC
+
+   Each word can start in the middle of a byte, and can end in the middle of a byte.
+   Furthermore, the 4-bit length field might be the least-significant 4 bits of a byte, or the
+   most significant 4 bits of a byte, depending on the length of the prior word.
+
+   The shortest word is 1 character.
+   Zero is illegal. (Causes a parse-time error.)
+   We also make length 15 not illegal, but invalid, so that we can illustrate getting
+   both a processing error and a validation error.
+   Hence, the longest word is length 14.
+
+   The point of this is to illustrate that you can't easily parse this and determine the length of
+   a message (unless you really understand LSBF bit order), and you cannot count on byte boundaries.
+
+   There are also different kinds of errors. Finding a 0 gives a parse error, but if we
+   move past the 0, we could continue parsing.
+
+   But if we get a length that says N characters, and there are not N available,
+   that's more fatal. The stream of data is corrupted.
+
+   ]]> -->
+
+  <xs:element name="word" type="tns:wordType"/>
+
+  <xs:element name="hexWords">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="word" type="tns:wordType" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:complexType name="wordType">
+    <xs:choice>
+      <!--
+        Normal case. Message with a legal length, followed by that amount of data.
+        -->
+      <xs:sequence>
+        <xs:element name="len" dfdl:lengthKind="explicit"
+                    dfdl:length="4"
+                    dfdl:outputValueCalc='{ dfdl:valueLength(../text, "bits") idiv 4 }'>
+          <xs:annotation>
+            <xs:appinfo source="http://www.ogf.org/dfdl/">
+              <!-- zero as length is illegal - not well formed -->
+              <dfdl:discriminator message="Zero not allowed for length.">{ . ne 0}</dfdl:discriminator>
+            </xs:appinfo>
+          </xs:annotation>
+          <xs:simpleType>
+            <xs:restriction base="xs:unsignedInt">
+              <xs:maxInclusive value="14"/> <!-- length 15 is invalid, but well formed -->
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+        <xs:element name="text" type="xs:string"
+                    dfdl:lengthKind="explicit" dfdl:length="{ ../len }"
+                    dfdl:lengthUnits="characters"/>
+      </xs:sequence>
+      <!--
+        This skips a bad nibble by just providing an illegal element to absorb it.
+        -->
+      <xs:element name="illegal" dfdl:lengthKind="explicit"
+                  dfdl:length="4">
+        <xs:simpleType>
+          <xs:restriction base="xs:unsignedInt">
+            <xs:maxExclusive value="0"/><!-- always fails for unsigned int. So these are never valid.-->
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:choice>
+  </xs:complexType>
+
+</xs:schema>
