@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<testSuite 
+  xmlns:dfdl="http://www.ogf.org/dfdl/dfdl-1.0/" 
+  xmlns:tdml="http://www.ibm.com/xmlns/dfdl/testData"
+  xmlns:ex="http://example.com/dfdl/hexWords/"
+  defaultRoundTrip="onePass"
+  defaultValidation="off">
+
+  <tdml:parserTestCase name="hexWords1" 
+    model="hexWords.dfdl.xsd" >
+    <tdml:document>
+      <tdml:documentPart type="byte">A4 BB 0A 50 AB CD 40 CA CD</tdml:documentPart>
+    </tdml:document>
+    <tdml:infoset>
+      <tdml:dfdlInfoset>
+        <ex:hexWords>
+          <word><len>4</len><text>ABBA</text></word>
+          <word><illegal>0</illegal></word>
+          <word><illegal>0</illegal></word>
+          <word><len>5</len><text>BADC0</text></word>
+          <word><len>4</len><text>ACDC</text></word>
+        </ex:hexWords>
+      </tdml:dfdlInfoset>
+    </tdml:infoset>
+  </tdml:parserTestCase>
+
+  <tdml:parserTestCase name="hexWords2"
+                       model="hexWords.dfdl.xsd" >
+    <tdml:document>
+      <tdml:documentPart type="byte">A4</tdml:documentPart>
+    </tdml:document>
+    <tdml:errors>
+      <tdml:error>Insufficient bits in data</tdml:error>
+    </tdml:errors>
+  </tdml:parserTestCase>
+
+  <tdml:parserTestCase name="hexWords3"
+                       model="hexWords.dfdl.xsd"
+                       validation="limited">
+    <tdml:document>
+      <tdml:documentPart type="byte">A4 BB 0A</tdml:documentPart>
+    </tdml:document>
+    <tdml:validationErrors>
+      <tdml:error>illegal</tdml:error>
+    </tdml:validationErrors>
+    <tdml:infoset>
+      <tdml:dfdlInfoset>
+        <ex:hexWords>
+          <word><len>4</len><text>ABBA</text></word>
+          <word><illegal>0</illegal></word>
+        </ex:hexWords>
+      </tdml:dfdlInfoset>
+    </tdml:infoset>
+  </tdml:parserTestCase>
+
+  <!--
+  This test shows both a procesing error and validation error.
+  The validation error is encountered first (in validation mode "limited")
+  and is recorded. Then the parse error occurs which fails the parse,
+  leaving left over data.
+  -->
+  <tdml:parserTestCase name="hexWords4"
+                       model="hexWords.dfdl.xsd"
+                       validation="limited">
+    <tdml:document>
+      <tdml:documentPart type="byte">A4 BB FA FF FF FF FF FF FF FF 1F</tdml:documentPart>
+    </tdml:document>
+
+    <!--
+    TDML runner doesn't seem to check validation errors if there are processing errors
+    See JIRA DAFFODIL-2410
+    -->
+    <tdml:validationErrors>
+      <tdml:error>len failed facet checks</tdml:error>
+    </tdml:validationErrors>
+
+    <tdml:errors>
+      <tdml:error>Left over data</tdml:error>
+    </tdml:errors>
+
+    <!--
+    <tdml:infoset>
+      <tdml:dfdlInfoset>
+        <ex:hexWords>
+          <word><len>4</len><text>ABBA</text></word>
+          <word><len>15</len><text>FFFFFFFFFFFFFFF</text></word>
+        </ex:hexWords>
+      </tdml:dfdlInfoset>
+    </tdml:infoset>
+    -->
+  </tdml:parserTestCase>
+  
+</testSuite>
