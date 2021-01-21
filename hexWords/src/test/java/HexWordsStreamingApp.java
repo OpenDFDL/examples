@@ -29,7 +29,7 @@ public class HexWordsStreamingApp {
     //
     // Setup for stream parsing.
     //
-    MessageParser mp = new MessageParser(schemaFileURL, true);
+    MessageParser mp = new MessageParser(schemaFileURL, "word", null);
 
     public HexWordsStreamingApp()
             throws IOException, URISyntaxException, MessageParser.CompileFailure {

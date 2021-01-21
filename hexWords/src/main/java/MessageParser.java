@@ -50,26 +50,24 @@ public class MessageParser {
     private JDOMInfosetOutputter outputter = new JDOMInfosetOutputter();
     private DataProcessor dp;
 
-    MessageParser(URL schemaFileURL, boolean validate) throws IOException, URISyntaxException, CompileFailure {
+    MessageParser(URL schemaFileURL, String rootName, String rootNS) throws IOException, URISyntaxException, CompileFailure {
         //
         // First compile the DFDL Schema
         //
         Compiler c = Daffodil.compiler();
         ProcessorFactory pf = c.compileSource(schemaFileURL.toURI())
-                .withDistinguishedRootNode("word", null);
+                .withDistinguishedRootNode(rootName, rootNS);
 
         List<Diagnostic> pfDiags = pf.getDiagnostics();
         if (pf.isError()) {
             throw new CompileFailure(pfDiags);
         }
         dp = pf.onPath("/");
-        if (validate) {
-            try {
-                dp = dp.withValidationMode(ValidationMode.Limited);
-            } catch (InvalidUsageException e) {
-                // impossible
-                throw new Error(e);
-            }
+        try {
+            dp = dp.withValidationMode(ValidationMode.Limited);
+        } catch (InvalidUsageException e) {
+            // impossible
+            throw new Error(e);
         }
         List<Diagnostic> dpDiags = dp.getDiagnostics();
         if (dp.isError()) {
