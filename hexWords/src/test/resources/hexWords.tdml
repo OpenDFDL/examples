@@ -26,7 +26,7 @@
   </tdml:parserTestCase>
 
   <tdml:parserTestCase name="hexWords2"
-                       model="hexWords.dfdl.xsd" >
+                       model="hexWords.dfdl.xsd" root="hexWords">
     <tdml:document>
       <tdml:documentPart type="byte">A4</tdml:documentPart>
     </tdml:document>
@@ -62,7 +62,7 @@
   -->
   <tdml:parserTestCase name="hexWords4"
                        model="hexWords.dfdl.xsd"
-                       validation="limited">
+                       validation="limited" root="hexWords">
     <tdml:document>
       <tdml:documentPart type="byte">A4 BB FA FF FF FF FF FF FF FF 1F</tdml:documentPart>
     </tdml:document>
@@ -76,7 +76,7 @@
     </tdml:validationErrors>
 
     <tdml:errors>
-      <tdml:error>Left over data</tdml:error>
+      <tdml:error>Insufficient bits in data. Needed 4 bit(s)</tdml:error>
     </tdml:errors>
 
     <!--

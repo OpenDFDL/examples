@@ -1,3 +1,5 @@
+package hexWords;
+
 import org.apache.daffodil.japi.*;
 import org.apache.daffodil.japi.Compiler;
 import org.apache.daffodil.japi.infoset.JDOMInfosetOutputter;
@@ -9,6 +11,7 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Streaming message parser class.
@@ -17,7 +20,7 @@ import java.util.List;
  */
 public class MessageParser {
 
-    static class CompileFailure extends Exception {
+   public static class CompileFailure extends Exception {
         List<Diagnostic> diags;
 
         CompileFailure(List<Diagnostic> diagnostics) {
@@ -31,12 +34,12 @@ public class MessageParser {
     /**
      * Result object for parse calls. Just a 4-tuple.
      */
-    static class Result {
-         Document message; // JDOM document that is the current parse result, or null
-         List<Diagnostic> diags; // diagnostics.
-         boolean isProcessingError;
-         boolean isValidationError;
-         boolean isEOD; // if true, no more data is available
+    public static class Result {
+         public Document message; // JDOM document that is the current parse result, or null
+         public List<Diagnostic> diags; // diagnostics.
+         public boolean isProcessingError;
+         public boolean isValidationError;
+         public boolean isEOD; // if true, no more data is available
 
         Result(Document doc, List<Diagnostic> diagnostics, boolean isProcErr, boolean isValidationErr, boolean isAtEnd) {
             message = doc;
@@ -50,7 +53,8 @@ public class MessageParser {
     private JDOMInfosetOutputter outputter = new JDOMInfosetOutputter();
     private DataProcessor dp;
 
-    MessageParser(URL schemaFileURL, String rootName, String rootNS) throws IOException, URISyntaxException, CompileFailure {
+    public MessageParser(URL schemaFileURL, String rootName, String rootNS) throws IOException, URISyntaxException, CompileFailure {
+        Objects.requireNonNull(schemaFileURL);
         //
         // First compile the DFDL Schema
         //
@@ -81,7 +85,7 @@ public class MessageParser {
         }
     }
 
-    void setInputStream(InputStream inputStream) {
+    public void setInputStream(InputStream inputStream) {
         dis = new InputSourceDataInputStream(inputStream);
     }
 
