@@ -72,42 +72,55 @@
   </xs:element>
 
   <xs:complexType name="wordType">
-    <xs:choice>
-      <!--
-        Normal case. Message with a legal length, followed by that amount of data.
-        -->
-      <xs:sequence>
-        <xs:element name="len" dfdl:lengthKind="explicit"
-                    dfdl:length="4"
-                    dfdl:outputValueCalc='{ dfdl:valueLength(../text, "bits") idiv 4 }'>
-          <xs:annotation>
-            <xs:appinfo source="http://www.ogf.org/dfdl/">
-              <!-- zero as length is illegal - not well formed -->
-              <dfdl:discriminator message="Zero not allowed for length.">{ . ne 0}</dfdl:discriminator>
-            </xs:appinfo>
-          </xs:annotation>
+    <xs:sequence>
+      <xs:group ref="tns:discriminateAnyData"/>
+      <xs:choice>
+        <!--
+          Normal case. Message with a legal length, followed by that amount of data.
+          -->
+        <xs:sequence>
+          <xs:element name="len" dfdl:lengthKind="explicit"
+                      dfdl:length="4"
+                      dfdl:outputValueCalc='{ dfdl:valueLength(../text, "bits") idiv 4 }'>
+            <xs:annotation>
+              <xs:appinfo source="http://www.ogf.org/dfdl/">
+                <!-- zero as length is illegal - not well formed -->
+                <dfdl:discriminator message="Zero not allowed for length.">{ . ne 0}</dfdl:discriminator>
+              </xs:appinfo>
+            </xs:annotation>
+            <xs:simpleType>
+              <xs:restriction base="xs:unsignedInt">
+                <xs:maxInclusive value="14"/> <!-- length 15 is invalid, but well formed -->
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:element>
+          <xs:element name="text" type="xs:string"
+                      dfdl:lengthKind="explicit" dfdl:length="{ ../len }"
+                      dfdl:lengthUnits="characters"/>
+        </xs:sequence>
+        <!--
+          This skips a bad nibble by just providing an illegal element to absorb it.
+          -->
+        <xs:element name="illegal" dfdl:lengthKind="explicit"
+                    dfdl:length="4">
           <xs:simpleType>
             <xs:restriction base="xs:unsignedInt">
-              <xs:maxInclusive value="14"/> <!-- length 15 is invalid, but well formed -->
+              <xs:maxExclusive value="0"/><!-- always fails for unsigned int. So these are never valid.-->
             </xs:restriction>
           </xs:simpleType>
         </xs:element>
-        <xs:element name="text" type="xs:string"
-                    dfdl:lengthKind="explicit" dfdl:length="{ ../len }"
-                    dfdl:lengthUnits="characters"/>
-      </xs:sequence>
-      <!--
-        This skips a bad nibble by just providing an illegal element to absorb it.
-        -->
-      <xs:element name="illegal" dfdl:lengthKind="explicit"
-                  dfdl:length="4">
-        <xs:simpleType>
-          <xs:restriction base="xs:unsignedInt">
-            <xs:maxExclusive value="0"/><!-- always fails for unsigned int. So these are never valid.-->
-          </xs:restriction>
-        </xs:simpleType>
-      </xs:element>
-    </xs:choice>
+      </xs:choice>
+    </xs:sequence>
   </xs:complexType>
+
+  <xs:group name="discriminateAnyData">
+    <xs:sequence>
+      <xs:annotation>
+        <xs:appinfo source="http://www.ogf.org/dfdl/">
+          <dfdl:discriminator testKind="pattern" testPattern="."/>
+        </xs:appinfo>
+      </xs:annotation>
+    </xs:sequence>
+  </xs:group>
 
 </xs:schema>
