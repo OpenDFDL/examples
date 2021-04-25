@@ -39,14 +39,12 @@ public class MessageParser {
          public List<Diagnostic> diags; // diagnostics.
          public boolean isProcessingError;
          public boolean isValidationError;
-         public boolean isEOD; // if true, no more data is available
 
-        Result(Document doc, List<Diagnostic> diagnostics, boolean isProcErr, boolean isValidationErr, boolean isAtEnd) {
+        Result(Document doc, List<Diagnostic> diagnostics, boolean isProcErr, boolean isValidationErr) {
             message = doc;
             diags = diagnostics;
             isProcessingError = isProcErr;
             isValidationError = isValidationErr;
-            isEOD = isAtEnd;
         }
     }
     private InputSourceDataInputStream dis;
@@ -89,6 +87,10 @@ public class MessageParser {
         dis = new InputSourceDataInputStream(inputStream);
     }
 
+    public boolean hasMoreData() {
+        return dis.hasData();
+    }
+
     /**
      * Called to pull messages from the data stream.
      * @return a Result object containing the results of the parse including diagnostic information.
@@ -103,12 +105,10 @@ public class MessageParser {
         boolean validationErr = res.isValidationError();
         List<Diagnostic> diags = res.getDiagnostics();
 
-        boolean atEnd = res.location().isAtEnd();
-
         Document doc = null;
         if (!procErr)
             doc = outputter.getResult();
-        Result r = new Result(doc, diags, procErr, validationErr, atEnd);
+        Result r = new Result(doc, diags, procErr, validationErr);
         outputter.reset();
         return r;
     }
