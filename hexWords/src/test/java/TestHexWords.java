@@ -99,6 +99,7 @@ public class TestHexWords {
         assertFalse(r.isProcessingError);
         assertFalse(r.isValidationError);
         compare("<word><len>4</len><text>ACDC</text></word>", r.message);
+        assertFalse(mp.hasMoreData());
     }
 
     @Test public void testMessageParser2() throws IOException {

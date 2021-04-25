@@ -9,6 +9,7 @@ resource_managed
 .cache
 .idea
 .idea_modules
+.bsp/
 errors
 project/errors
 .~*#
