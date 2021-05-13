@@ -1,4 +1,5 @@
 import hexWords.MessageParser;
+import hexWords.MessageParser.Result;
 import org.apache.daffodil.tdml.Runner;
 import org.apache.daffodil.util.Misc;
 import org.apache.daffodil.xml.XMLUtils;
@@ -57,9 +58,9 @@ public class TestHexWords {
      * @throws IOException
      */
     private Node toNode(Document doc) throws IOException {
-        var sw = new StringWriter();
+        StringWriter sw = new StringWriter();
         xout.output(doc, sw);
-        var root = (Node) scala.xml.XML.loadString(sw.toString());
+        Node root = (Node) scala.xml.XML.loadString(sw.toString());
         return root;
     }
 
@@ -72,10 +73,8 @@ public class TestHexWords {
      * @throws IOException
      */
     private void compare(String expectedXML, Document doc) throws IOException {
-        var diffs = XMLUtils.computeDiff((Node) XML.loadString(expectedXML), toNode(doc), true, false, false);
-        if (diffs.length() > 0) {
-            fail("Differences found.");
-        }
+        // throws an exception if there are any differences
+        XMLUtils.compareAndReport((Node) XML.loadString(expectedXML), toNode(doc), true, false, false);
     }
 
     @Test public void testMessageParser1() throws IOException {
@@ -84,10 +83,10 @@ public class TestHexWords {
         // In a real system this would open a file or socket or other
         // source of an InputStream.
         //
-        var is = new ByteArrayInputStream(Misc.
+        ByteArrayInputStream is = new ByteArrayInputStream(Misc.
                 hex2Bytes("A4 BB 5A AB CD 40 CA CD".replace(" ", "")));
         mp.setInputStream(is);
-        var r = mp.parse();
+        Result r = mp.parse();
         assertFalse(r.isProcessingError);
         assertFalse(r.isValidationError);
         compare("<word><len>4</len><text>ABBA</text></word>",r.message);
@@ -108,10 +107,10 @@ public class TestHexWords {
         // In a real system this would open a file or socket or other
         // source of an InputStream.
         //
-        var is = new ByteArrayInputStream(Misc.
+        ByteArrayInputStream is = new ByteArrayInputStream(Misc.
                 hex2Bytes("A4 BB 0A 50 AB CD 40 CA CD 05".replace(" ", "")));
         mp.setInputStream(is);
-        var r = mp.parse();
+        Result r = mp.parse();
         assertFalse(r.isProcessingError);
         assertFalse(r.isValidationError);
         compare("<word><len>4</len><text>ABBA</text></word>",r.message);
@@ -141,7 +140,7 @@ public class TestHexWords {
         r = mp.parse();
         assertTrue(r.isProcessingError);
         assertTrue(r.diags.stream().anyMatch(d -> {
-            var m = d.getMessage().toLowerCase();
+            String m = d.getMessage().toLowerCase();
             return m.contains("Parse Error".toLowerCase()) &&
                     m.contains("Insufficient bits in data".toLowerCase()) &&
                     m.contains("needed 20 bit".toLowerCase());
