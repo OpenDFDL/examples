@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<testSuite 
+<tdml:testSuite
   xmlns:dfdl="http://www.ogf.org/dfdl/dfdl-1.0/" 
   xmlns:tdml="http://www.ibm.com/xmlns/dfdl/testData"
   xmlns:ex="http://example.com/dfdl/hexWords/"
@@ -91,4 +91,4 @@
     -->
   </tdml:parserTestCase>
   
-</testSuite>
+</tdml:testSuite>
