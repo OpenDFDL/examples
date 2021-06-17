@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:fn="http://www.w3.org/2005/xpath-functions"
+  xmlns:dfdl="http://www.ogf.org/dfdl/dfdl-1.0/"
+  xmlns:p="urn:pairstransform"
+  targetNamespace="urn:pairstransform"
+  elementFormDefault="unqualified">
+
+  <xs:include schemaLocation="org/apache/daffodil/xsd/DFDLGeneralFormat.dfdl.xsd" />
+
+  <xs:annotation>
+    <xs:appinfo source="http://www.ogf.org/dfdl/">
+      <dfdl:format ref="p:GeneralFormat" lengthKind="delimited"
+        textNumberPattern="#0.00000"/>
+    </xs:appinfo>
+  </xs:annotation>
+
+  <xs:group name="lists">
+    <xs:sequence>
+      <xs:sequence>
+       <xs:element name="listLat" minOccurs="1" maxOccurs="unbounded"
+                   dfdl:occursCountKind="expression"
+                   dfdl:occursCount="{ ../count }"
+                   dfdl:terminator="%NL;">
+         <xs:complexType>
+           <xs:sequence>
+             <xs:element name="value" type="xs:float"
+                dfdl:outputValueCalc="{ ../../pairs/pair[dfdl:occursIndex()]/lat }"/>
+           </xs:sequence>
+         </xs:complexType>
+       </xs:element>
+      </xs:sequence>
+      <xs:sequence>
+        <xs:element name="listLon" minOccurs="1" maxOccurs="unbounded"
+                    dfdl:occursCountKind="expression"
+                    dfdl:occursCount="{ ../count }"
+                    dfdl:terminator="%NL;">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="value" type="xs:float"
+                          dfdl:outputValueCalc="{ ../../pairs/pair[dfdl:occursIndex()]/lon }"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:sequence>
+        <xs:annotation><xs:appinfo source="http://www.ogf.org/dfdl/">
+          <dfdl:assert
+            message="The lat and lon arrays must be the same length.">{
+              fn:count( listLat ) eq fn:count ( listLon )
+            }</dfdl:assert>
+        </xs:appinfo></xs:annotation>
+      </xs:sequence>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:complexType name="pair">
+    <xs:sequence>
+      <xs:element name="lat" type="xs:float"
+        dfdl:inputValueCalc="{ ../../../listLat[dfdl:occursIndex()]/value }"/>
+      <xs:element name="lon" type="xs:float"
+        dfdl:inputValueCalc="{ ../../../listLon[dfdl:occursIndex()]/value }"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="pairs">
+    <xs:sequence>
+      <xs:element name="pair" type="p:pair" minOccurs="1" maxOccurs="unbounded"
+                  dfdl:occursCountKind="expression"
+                  dfdl:occursCount="{ fn:count(../../listLat) }"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="latLon">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="count" type="xs:unsignedInt" dfdl:terminator="%NL;"/>
+        <!--
+          You might want to hide this group ref using dfdl:hiddenGroupRef.
+
+          However, due to the fact that an array with dfdl:occursCountKind='expression'
+          does NOT get its expression evaluated at unparse time (DFDL Spec 1.0 section 16.1.4)
+          it is not possible for the representation arrays to allocate elements to be
+          computed at unparse time unless the number of such elements is statically known.
+
+          Hence, if you want to parse and unparse the data (round trip), then you can't
+          hide the group of representation arrays.
+
+          You can, however, have them appear, for unparsing, as elements with value 0.0, since
+          their values will be recomputed by dfdl:outputValueCalc at unparse time from
+          the pairs.
+
+          You can also hide this group ref if you only care about parsing.
+
+          We should consider an experimental property
+          dfdlx:unparseComputeOccursCountKindExpression='true' that flips this policy.
+
+          This is conceptually similar to the proposals to allow computing
+          dfdl:choiceDispatchKey at unparse time as well, to allow a hidden group to choose
+          a completely synthetic/computed branch to use as the representation.
+          -->
+        <xs:group ref="p:lists"/>
+        <xs:element name="pairs" type="p:pairs"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="latLonParseOnly">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="count" type="xs:unsignedInt" dfdl:terminator="%NL;"/>
+        <!--
+          Same as latLon element, except uses a hidden group for the p:lists
+          hence, usable only for parsing.
+          -->
+        <xs:sequence dfdl:hiddenGroupRef="p:lists"/>
+        <xs:element name="pairs" type="p:pairs"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

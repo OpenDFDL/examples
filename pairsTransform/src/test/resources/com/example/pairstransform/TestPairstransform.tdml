@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<tdml:testSuite suiteName="Pairstransform" description="Pairstransform tests"
+  xmlns:dfdl="http://www.ogf.org/dfdl/dfdl-1.0/" 
+  xmlns:fn="http://www.w3.org/2005/xpath-functions" 
+  xmlns:tdml="http://www.ibm.com/xmlns/dfdl/testData" 
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  defaultRoundTrip="none">
+
+  <tdml:parserTestCase name="test_pairstransform_01p" root="latLon" model="com/example/pairstransform/xsd/pairstransform.dfdl.xsd">
+    <tdml:document>
+      <tdml:documentPart type="file">com/example/pairstransform/data/test_01.txt</tdml:documentPart>
+    </tdml:document>
+    <tdml:infoset>
+      <tdml:dfdlInfoset type="file">com/example/pairstransform/infosets/test_01.xml</tdml:dfdlInfoset>
+    </tdml:infoset>
+  </tdml:parserTestCase>
+
+  <tdml:unparserTestCase name="test_pairstransform_01u" root="latLon" model="com/example/pairstransform/xsd/pairstransform.dfdl.xsd">
+    <tdml:document>
+      <tdml:documentPart type="file">com/example/pairstransform/data/test_01.txt</tdml:documentPart>
+    </tdml:document>
+    <tdml:infoset>
+      <tdml:dfdlInfoset type="file">com/example/pairstransform/infosets/test_01.xml</tdml:dfdlInfoset>
+    </tdml:infoset>
+  </tdml:unparserTestCase>
+
+  <tdml:parserTestCase name="test_pairstransform_02p" root="latLonParseOnly" model="com/example/pairstransform/xsd/pairstransform.dfdl.xsd">
+    <tdml:document>
+      <tdml:documentPart type="file">com/example/pairstransform/data/test_01.txt</tdml:documentPart>
+    </tdml:document>
+    <tdml:infoset>
+      <tdml:dfdlInfoset type="file">com/example/pairstransform/infosets/test_02.xml</tdml:dfdlInfoset>
+    </tdml:infoset>
+  </tdml:parserTestCase>
+
+</tdml:testSuite>
