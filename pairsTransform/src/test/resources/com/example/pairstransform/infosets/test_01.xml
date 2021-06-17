@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:latLon xmlns:p="urn:pairstransform">
+  <count>3</count>
+  <listLat><value>-64.76667</value></listLat>
+  <listLat><value>-64.78333</value></listLat>
+  <listLat><value>-64.83333</value></listLat>
+  <listLon><value>17.7</value></listLon>
+  <listLon><value>17.66667</value></listLon>
+  <listLon><value>17.66667</value></listLon>
+  <pairs>
+    <pair><lat>-64.76667</lat><lon>17.7</lon></pair>
+    <pair><lat>-64.78333</lat><lon>17.66667</lon></pair>
+    <pair><lat>-64.83333</lat><lon>17.66667</lon></pair>
+  </pairs>
+</p:latLon>
