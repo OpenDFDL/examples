@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:latLonLists xmlns:p="urn:pairstransform">
+  <listLat>-64.76667</listLat>
+  <listLat>-64.78333</listLat>
+  <listLat>-64.83333</listLat>
+  <listLon>17.7</listLon>
+  <listLon>17.66667</listLon>
+  <listLon>17.66672</listLon>
+</p:latLonLists>

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<p:latLonParseOnly xmlns:p="urn:pairstransform">
-  <count>3</count>
-  <pairs>
-    <pair><lat>-64.76667</lat><lon>17.7</lon></pair>
-    <pair><lat>-64.78333</lat><lon>17.66667</lon></pair>
-    <pair><lat>-64.83333</lat><lon>17.66667</lon></pair>
-  </pairs>
-</p:latLonParseOnly>

@@ -17,8 +17,11 @@ class TestPairstransform {
 
   import TestPairstransform._
 
+  @Test def test_latLonLists01(): Unit = { runner.runOneTest("test_latlonLists01") }
+  @Test def test_parseIntoPairs01(): Unit = { runner.runOneTest("test_parseIntoPairs01") }
+  @Test def test_parseIntoNESW01(): Unit = { runner.runOneTest("test_parseIntoNESW01") }
+
   @Test def test_pairstransform_01p(): Unit = { runner.runOneTest("test_pairstransform_01p") }
   @Test def test_pairstransform_01u(): Unit = { runner.runOneTest("test_pairstransform_01u") }
-  @Test def test_pairstransform_02p(): Unit = { runner.runOneTest("test_pairstransform_02p") }
 
 }

@@ -8,31 +8,57 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   defaultRoundTrip="none">
 
-  <tdml:parserTestCase name="test_pairstransform_01p" root="latLon" model="com/example/pairstransform/xsd/pairstransform.dfdl.xsd">
+
+  <tdml:parserTestCase name="test_latlonLists01"
+                       model="com/example/pairstransform/xsd/pairstransformParseOnly.dfdl.xsd">
     <tdml:document>
-      <tdml:documentPart type="file">com/example/pairstransform/data/test_01.txt</tdml:documentPart>
+      <tdml:documentPart type="file">com/example/pairstransform/data/latLonLists.txt</tdml:documentPart>
     </tdml:document>
     <tdml:infoset>
-      <tdml:dfdlInfoset type="file">com/example/pairstransform/infosets/test_01.xml</tdml:dfdlInfoset>
+      <tdml:dfdlInfoset type="file">com/example/pairstransform/infosets/latLonLists.xml</tdml:dfdlInfoset>
     </tdml:infoset>
   </tdml:parserTestCase>
 
-  <tdml:unparserTestCase name="test_pairstransform_01u" root="latLon" model="com/example/pairstransform/xsd/pairstransform.dfdl.xsd">
+  <tdml:parserTestCase name="test_parseIntoPairs01"
+                       model="com/example/pairstransform/xsd/pairstransformParseOnly.dfdl.xsd">
     <tdml:document>
-      <tdml:documentPart type="file">com/example/pairstransform/data/test_01.txt</tdml:documentPart>
+      <tdml:documentPart type="file">com/example/pairstransform/data/latLonLists.txt</tdml:documentPart>
     </tdml:document>
     <tdml:infoset>
-      <tdml:dfdlInfoset type="file">com/example/pairstransform/infosets/test_01.xml</tdml:dfdlInfoset>
+      <tdml:dfdlInfoset type="file">com/example/pairstransform/infosets/pairList.xml</tdml:dfdlInfoset>
+    </tdml:infoset>
+  </tdml:parserTestCase>
+
+  <tdml:parserTestCase name="test_parseIntoNESW01"
+                       model="com/example/pairstransform/xsd/pairstransformParseOnly.dfdl.xsd">
+    <tdml:document>
+      <tdml:documentPart type="file">com/example/pairstransform/data/latLonLists.txt</tdml:documentPart>
+    </tdml:document>
+    <tdml:infoset>
+      <tdml:dfdlInfoset type="file">com/example/pairstransform/infosets/neswList.xml</tdml:dfdlInfoset>
+    </tdml:infoset>
+  </tdml:parserTestCase>
+
+  <tdml:parserTestCase name="test_pairstransform_01p"
+                       model="com/example/pairstransform/xsd/pairstransformWithUnparse.dfdl.xsd">
+    <tdml:document>
+      <tdml:documentPart type="file">com/example/pairstransform/data/latLonLists.txt</tdml:documentPart>
+    </tdml:document>
+    <tdml:infoset>
+      <tdml:dfdlInfoset type="file">com/example/pairstransform/infosets/both.xml</tdml:dfdlInfoset>
+    </tdml:infoset>
+  </tdml:parserTestCase>
+
+  <tdml:unparserTestCase name="test_pairstransform_01u"
+                         model="com/example/pairstransform/xsd/pairstransformWithUnparse.dfdl.xsd">
+    <tdml:document>
+      <tdml:documentPart type="file">com/example/pairstransform/data/latLonLists.txt</tdml:documentPart>
+    </tdml:document>
+    <tdml:infoset>
+      <tdml:dfdlInfoset type="file">com/example/pairstransform/infosets/both.xml</tdml:dfdlInfoset>
     </tdml:infoset>
   </tdml:unparserTestCase>
 
-  <tdml:parserTestCase name="test_pairstransform_02p" root="latLonParseOnly" model="com/example/pairstransform/xsd/pairstransform.dfdl.xsd">
-    <tdml:document>
-      <tdml:documentPart type="file">com/example/pairstransform/data/test_01.txt</tdml:documentPart>
-    </tdml:document>
-    <tdml:infoset>
-      <tdml:dfdlInfoset type="file">com/example/pairstransform/infosets/test_02.xml</tdml:dfdlInfoset>
-    </tdml:infoset>
-  </tdml:parserTestCase>
+
 
 </tdml:testSuite>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:latLonPairs xmlns:p="urn:pairstransform">
+  <pair>
+    <lat>-64.76667</lat>
+    <lon>17.7</lon>
+  </pair>
+  <pair>
+    <lat>-64.78333</lat>
+    <lon>17.66667</lon>
+  </pair>
+  <pair>
+    <lat>-64.83333</lat>
+    <lon>17.66672</lon>
+  </pair>
+</p:latLonPairs>

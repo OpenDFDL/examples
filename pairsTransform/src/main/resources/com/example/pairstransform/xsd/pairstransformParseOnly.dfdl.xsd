@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:fn="http://www.w3.org/2005/xpath-functions"
+  xmlns:dfdl="http://www.ogf.org/dfdl/dfdl-1.0/"
+  xmlns:dfdlx="http://www.ogf.org/dfdl/dfdl-1.0/extensions"
+  xmlns:p="urn:pairstransform"
+  targetNamespace="urn:pairstransform"
+  elementFormDefault="unqualified">
+
+  <xs:include schemaLocation="org/apache/daffodil/xsd/DFDLGeneralFormat.dfdl.xsd" />
+
+  <!--
+  First we transform the input data into XML using DFDL
+  -->
+
+  <xs:annotation>
+    <xs:appinfo source="http://www.ogf.org/dfdl/">
+
+      <dfdl:format ref="p:GeneralFormat" lengthKind="delimited"
+        textNumberPattern="#0.00000"
+        dfdlx:parseUnparsePolicy="parseOnly" />
+
+      <dfdl:defineFormat name="array1">
+        <dfdl:format occursCountKind="expression"
+                     occursCount="{ ../count }"
+                     terminator="%NL;"/>
+      </dfdl:defineFormat>
+
+    </xs:appinfo>
+  </xs:annotation>
+
+  <xs:element name="latLonLists">
+    <xs:annotation><xs:documentation>
+      Physical representation described using DFDL.
+    </xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:sequence dfdl:hiddenGroupRef="p:count"/>
+        <xs:element name="listLat" type="xs:float" minOccurs="0" maxOccurs="unbounded"
+                    dfdl:ref="p:array1"/>
+        <xs:element name="listLon" type="xs:float" minOccurs="0" maxOccurs="unbounded"
+                    dfdl:ref="p:array1"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:group name="count">
+    <xs:sequence>
+      <xs:element name="count" type="xs:unsignedInt"
+                  dfdl:terminator="%NL;"/>
+    </xs:sequence>
+  </xs:group>
+
+  <!--
+  Next we transform that pair of lists, into a list of pairs
+  -->
+
+  <xs:group name="latLonLists">
+    <xs:sequence>
+      <xs:element ref="p:latLonLists"/>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:element name="latLonPairs">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:sequence dfdl:hiddenGroupRef="p:latLonLists"/>
+        <xs:element name="pair" minOccurs="1" maxOccurs="unbounded"
+                    dfdl:occursCountKind="expression"
+                    dfdl:occursCount="{ fn:count(../p:latLonLists/listLat) }">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="lat" type="xs:float"
+                          dfdl:inputValueCalc="{ ../../p:latLonLists/listLat[dfdl:occursIndex()] }"/>
+              <xs:element name="lon" type="xs:float"
+                          dfdl:inputValueCalc="{ ../../p:latLonLists/listLon[dfdl:occursIndex()] }"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!--
+  Then we transform into a list of lat/lon pairs with a N-E-S-W syntax.
+  -->
+
+  <xs:group name="latLonPairs">
+    <xs:sequence>
+      <xs:element ref="p:latLonPairs"/>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:annotation>
+    <xs:appinfo source="http://www.ogf.org/dfdl/">
+      <dfdl:defineVariable name="lat" type="xs:float"/>
+      <dfdl:defineVariable name="latDir" type="xs:string"/>
+      <dfdl:defineVariable name="absLat" type="xs:float"/>
+      <dfdl:defineVariable name="lon" type="xs:float"/>
+      <dfdl:defineVariable name="lonDir" type="xs:string"/>
+      <dfdl:defineVariable name="absLon" type="xs:float"/>
+    </xs:appinfo>
+  </xs:annotation>
+
+  <xs:element name="neswPairs">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:sequence dfdl:hiddenGroupRef="p:latLonPairs"/>
+        <xs:element name="nesw" minOccurs="1" maxOccurs="unbounded"
+                    dfdl:occursCountKind="expression"
+                    dfdl:occursCount='{ fn:count(../p:latLonPairs/pair) }'>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:annotation>
+                <xs:appinfo source="http://www.ogf.org/dfdl/">
+
+                  <dfdl:newVariableInstance ref="p:lat">{
+                    ../p:latLonPairs/pair[dfdl:occursIndex()]/lat
+                    }
+                  </dfdl:newVariableInstance>
+
+                  <dfdl:newVariableInstance ref="p:latDir">{
+                    if ($p:lat ge 0) then "N" else "S"
+                    }
+                  </dfdl:newVariableInstance>
+
+                  <dfdl:newVariableInstance ref="p:absLat">{
+                    if ($p:lat ge 0) then $p:lat else $p:lat * -1.0
+                    }
+                  </dfdl:newVariableInstance>
+
+                  <dfdl:newVariableInstance ref="p:lon">{
+                    ../p:latLonPairs/pair[dfdl:occursIndex()]/lon
+                    }
+                  </dfdl:newVariableInstance>
+
+                  <dfdl:newVariableInstance ref="p:lonDir">{
+                    if ($p:lon ge 0) then "E" else "W"
+                    }
+                  </dfdl:newVariableInstance>
+
+                  <dfdl:newVariableInstance ref="p:absLon">{
+                    if ($p:lon ge 0) then $p:lon else $p:lon * -1.0
+                    }
+                  </dfdl:newVariableInstance>
+                </xs:appinfo>
+              </xs:annotation>
+              <xs:element name="loc" type="xs:string"
+                          dfdl:inputValueCalc='{
+                              fn:concat(
+                                $p:latDir,
+                                " ",
+                                $p:absLat,
+                                ", ",
+                                $p:lonDir,
+                                " ",
+                                $p:absLon)
+                            }'/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>
