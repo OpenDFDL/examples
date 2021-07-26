@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<p:neswPairs xmlns:p="urn:pairstransform">
+<p:neswPoints xmlns:p="urn:pairstransform">
   <nesw>
     <loc>S 64.76667, E 17.7</loc>
   </nesw>
@@ -9,4 +9,4 @@
   <nesw>
     <loc>S 64.83333, E 17.66672</loc>
   </nesw>
-</p:neswPairs>
+</p:neswPoints>

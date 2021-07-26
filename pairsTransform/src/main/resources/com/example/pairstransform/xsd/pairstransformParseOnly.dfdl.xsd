@@ -97,14 +97,12 @@
     <xs:appinfo source="http://www.ogf.org/dfdl/">
       <dfdl:defineVariable name="lat" type="xs:float"/>
       <dfdl:defineVariable name="latDir" type="xs:string"/>
-      <dfdl:defineVariable name="absLat" type="xs:float"/>
       <dfdl:defineVariable name="lon" type="xs:float"/>
       <dfdl:defineVariable name="lonDir" type="xs:string"/>
-      <dfdl:defineVariable name="absLon" type="xs:float"/>
     </xs:appinfo>
   </xs:annotation>
 
-  <xs:element name="neswPairs">
+  <xs:element name="neswPoints">
     <xs:complexType>
       <xs:sequence>
         <xs:sequence dfdl:hiddenGroupRef="p:latLonPairs"/>
@@ -115,49 +113,14 @@
             <xs:sequence>
               <xs:annotation>
                 <xs:appinfo source="http://www.ogf.org/dfdl/">
-
-                  <dfdl:newVariableInstance ref="p:lat">{
-                    ../p:latLonPairs/pair[dfdl:occursIndex()]/lat
-                    }
-                  </dfdl:newVariableInstance>
-
-                  <dfdl:newVariableInstance ref="p:latDir">{
-                    if ($p:lat ge 0) then "N" else "S"
-                    }
-                  </dfdl:newVariableInstance>
-
-                  <dfdl:newVariableInstance ref="p:absLat">{
-                    if ($p:lat ge 0) then $p:lat else $p:lat * -1.0
-                    }
-                  </dfdl:newVariableInstance>
-
-                  <dfdl:newVariableInstance ref="p:lon">{
-                    ../p:latLonPairs/pair[dfdl:occursIndex()]/lon
-                    }
-                  </dfdl:newVariableInstance>
-
-                  <dfdl:newVariableInstance ref="p:lonDir">{
-                    if ($p:lon ge 0) then "E" else "W"
-                    }
-                  </dfdl:newVariableInstance>
-
-                  <dfdl:newVariableInstance ref="p:absLon">{
-                    if ($p:lon ge 0) then $p:lon else $p:lon * -1.0
-                    }
-                  </dfdl:newVariableInstance>
+                  <dfdl:newVariableInstance ref="p:lat" defaultValue='{ ../p:latLonPairs/pair[dfdl:occursIndex()]/lat }'/>
+                  <dfdl:newVariableInstance ref="p:latDir" defaultValue='{ if ($p:lat ge 0) then "N" else "S" }'/>
+                  <dfdl:newVariableInstance ref="p:lon" defaultValue='{ ../p:latLonPairs/pair[dfdl:occursIndex()]/lon }'/>
+                  <dfdl:newVariableInstance ref="p:lonDir" defaultValue='{ if ($p:lon ge 0) then "E" else "W" }'/>
                 </xs:appinfo>
               </xs:annotation>
               <xs:element name="loc" type="xs:string"
-                          dfdl:inputValueCalc='{
-                              fn:concat(
-                                $p:latDir,
-                                " ",
-                                $p:absLat,
-                                ", ",
-                                $p:lonDir,
-                                " ",
-                                $p:absLon)
-                            }'/>
+                dfdl:inputValueCalc='{ fn:concat($p:latDir, " ", fn:abs($p:lat), ", ", $p:lonDir, " ", fn:abs($p:lon)) }'/>
             </xs:sequence>
           </xs:complexType>
         </xs:element>
