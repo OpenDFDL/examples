@@ -11,8 +11,10 @@ scalaVersion := "2.12.15"
 retrieveManaged := true
 useCoursier := false // Workaround becauuse retrieveManaged doesn't work in some sbt versions.
 
+Compile / run / mainClass := Some("HelloWorld")
+
 libraryDependencies ++= Seq(
-  "org.apache.daffodil" %% "daffodil-japi" % "3.2.0",
+  "org.apache.daffodil" %% "daffodil-japi" % "3.2.1",
   "jaxen" % "jaxen" % "1.2.0",
   "junit" % "junit" % "4.13.2" % "test",
   "com.github.sbt" % "junit-interface" % "0.13.2" % "test"
