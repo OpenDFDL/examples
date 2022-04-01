@@ -8,7 +8,7 @@ of latitudes, then a list of longitudes. The result of the transformation is a l
 containing a latitude and a longitude.
 
 So the physical represenatation of the data, and the logical presentation of the data are radically different.
-This transformation is equivalent to inverting a matrix.
+This transformation is equivalent to transposing a matrix.
 
 ## Conclusions
 
