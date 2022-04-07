@@ -11,7 +11,7 @@ applies the definition and publishes the json result to a topic in pubsub.
 
 ```
 .
-└── dfdl_example
+└── pubsub_firestore_bynary_processor
  ├── examples # Contain a binary and dfdl definition to be used to run this example
  └── src
        └── main
