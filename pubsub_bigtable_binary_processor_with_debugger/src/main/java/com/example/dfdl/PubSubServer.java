@@ -22,10 +22,7 @@ import com.google.cloud.spring.pubsub.support.GcpPubSubHeaders;
 import java.io.IOException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-<<<<<<< HEAD
 import org.apache.daffodil.japi.InvalidUsageException;
-=======
->>>>>>> 5c12fff7f19165ac4a7937869e592581692ae612
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
