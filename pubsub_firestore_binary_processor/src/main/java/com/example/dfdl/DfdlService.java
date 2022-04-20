@@ -15,25 +15,21 @@ package com.example.dfdl;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.List;
 import org.apache.daffodil.japi.Compiler;
 import org.apache.daffodil.japi.Daffodil;
 import org.apache.daffodil.japi.DataProcessor;
-import org.apache.daffodil.japi.Diagnostic;
 import org.apache.daffodil.japi.InvalidUsageException;
 import org.apache.daffodil.japi.ParseResult;
 import org.apache.daffodil.japi.ProcessorFactory;
-import org.apache.daffodil.japi.ValidationMode;
-import org.apache.daffodil.japi.debugger.TraceDebuggerRunner;
 import org.apache.daffodil.japi.infoset.InfosetOutputter;
 import org.apache.daffodil.japi.infoset.JsonInfosetOutputter;
 import org.apache.daffodil.japi.io.InputSourceDataInputStream;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 
 /**
@@ -49,51 +45,17 @@ public class DfdlService {
   @Value("${debugger.usage:true}")
   boolean debuggerUsage;
 
-  /**
-   * Compiles schema file and parses an event message.
-   *
-   * <p>This function will compile a DFDL schema every time a message needs to be parsed. Schema
-   * compilation is fairly intensive and can be a bottleneck, especially with large schemas. If
-   * performance is a concerned, it is recommended that schemas are compiled once to create a
-   * DataProcessor and the DataProcessor be cached and reused everytime a message needs to be
-   * parsed. Memorystore for Redis which is a fully managed Redis service for the Google Cloud is
-   * recommended for this use case.
-   */
-  // TODO: Save compiled DFDL schema in Memorystore so it is not compiled it for every parse.
+  @Autowired private ProcessorDataService processorDataService;
+
+  /** Creates {@link DataProcessor} and parses an event message. */
   public String convertDataMessage(String message, DfdlDef dfdl)
       throws IOException, InvalidUsageException {
-    // DFDL definition file
-    File schemaFile = createSchemaFile(dfdl);
 
-    // Compile the de DFDL definition or schema file
-    Compiler dfdlCompiler = Daffodil.compiler();
-    ProcessorFactory processorFactory = dfdlCompiler.compileFile(schemaFile);
-    if (processorFactory.isError()) {
-      // Error compiling the schema. Printing diagnostic for troubleshooting.
-      List<Diagnostic> diags = processorFactory.getDiagnostics();
-      for (Diagnostic d : diags) {
-        System.err.println(d.getSomeMessage());
-      }
-      System.exit(1);
-    }
-    // "/" in the only support path.
-    DataProcessor dataProcessor =
-        processorFactory
-            .onPath("/")
-            .withValidationMode(ValidationMode.Off)
-            .withDebuggerRunner(new TraceDebuggerRunner())
-            .withDebugging(debuggerUsage);
+    Processor processor = new Processor(dfdl.name, dfdl.definition);
+    DataProcessor dataProcessor = processorDataService.getDataProcessor(processor);
 
-    // Return result in a json format
+    // Result in a json format
     return jsonMessageResult(message, dataProcessor);
-  }
-
-  private File createSchemaFile(DfdlDef dfdlDef) throws IOException {
-    File schemaFile = new File(dfdlDef.getName());
-    FileWriter definitionWriter = new FileWriter(schemaFile);
-    definitionWriter.write(dfdlDef.getDefinition());
-    definitionWriter.close();
-    return schemaFile;
   }
 
   private String jsonMessageResult(String message, DataProcessor dataProcessor) {

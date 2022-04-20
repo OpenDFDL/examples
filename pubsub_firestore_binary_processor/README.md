@@ -22,6 +22,8 @@ applies the definition and publishes the json result to a topic in pubsub.
                    ├── DfdlService # Processes the binary using a dfdl definition and output a json
                    ├── FirestoreService # Reads dfdl definitons from a firestore database
                    ├── MessageController # Publishes message to a topic with a binary to be processed.
+                   ├── Processor # Allows cachaching abstraction in Spring for the DataProcessor. 
+                   ├── ProcessorDataService # Helper class to enable cachaching abstraction in Spring 
                    ├── ProcessorService # Initializes components, configurations and services.
                    ├── PubSubServer # Publishes and subscribes to topics using channels adapters.
                    └── README.md
