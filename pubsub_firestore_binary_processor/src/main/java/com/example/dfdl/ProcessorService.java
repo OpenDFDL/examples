@@ -58,15 +58,4 @@ public class ProcessorService {
       }
     };
   }
-
-  /**
-   * Configures cache store so that the dataProcessors are cached within processors
-   */
-  @Bean
-  public CacheManager cacheManager() {
-    SimpleCacheManager cacheManager = new SimpleCacheManager();
-    cacheManager.setCaches(Arrays.asList(
-        new ConcurrentMapCache("processors")));
-    return cacheManager;
-  }
 }
