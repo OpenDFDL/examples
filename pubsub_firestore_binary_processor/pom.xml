@@ -18,14 +18,6 @@ limitations under the License. -->
     xmlns="http://maven.apache.org/POM/4.0.0"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <artifactId>dfdl</artifactId>
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-        <groupId>org.springframework.boot</groupId>
-      </plugin>
-    </plugins>
-  </build>
   <dependencies>
     <dependency>
       <artifactId>spring-boot-starter</artifactId>
@@ -45,11 +37,6 @@ limitations under the License. -->
       <groupId>org.springframework.boot</groupId>
     </dependency>
     <dependency>
-      <artifactId>jaxen</artifactId>
-      <groupId>jaxen</groupId>
-      <version>1.2.0</version>
-    </dependency>
-    <dependency>
       <artifactId>daffodil-japi_2.12</artifactId>
       <groupId>org.apache.daffodil</groupId>
       <version>3.3.0</version>
@@ -57,12 +44,16 @@ limitations under the License. -->
     <dependency>
       <artifactId>spring-cloud-gcp-starter-data-firestore</artifactId>
       <groupId>com.google.cloud</groupId>
-      <version>3.1.0</version>
+      <version>3.2.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-redis</artifactId>
     </dependency>
     <dependency>
       <artifactId>spring-boot</artifactId>
       <groupId>org.springframework.boot</groupId>
-      <version>2.6.6</version>
+      <version>2.6.7</version>
     </dependency>
   </dependencies>
   <dependencyManagement>
