@@ -7,6 +7,9 @@ The application send a request with the binary to process to a pubsub topic.
 The processor service subscribes to the topic, processes every message,
 applies the definition and publishes the json result to a topic in pubsub.
 
+## Before you start
+[Google’s open-source solution to DFDL Processing](https://cloud.google.com/blog/products/application-modernization/dfdl-processing-with-google-cloud)
+
 ## Project Structure
 
 ```
@@ -22,6 +25,8 @@ applies the definition and publishes the json result to a topic in pubsub.
                    ├── DfdlService # Processes the binary using a dfdl definition and output a json
                    ├── FirestoreService # Reads dfdl definitons from a firestore database
                    ├── MessageController # Publishes message to a topic with a binary to be processed.
+                   ├── Processor # Allows cachaching abstraction in Spring for the DataProcessor. 
+                   ├── ProcessorDataService # Helper class to enable cachaching abstraction in Spring 
                    ├── ProcessorService # Initializes components, configurations and services.
                    ├── PubSubServer # Publishes and subscribes to topics using channels adapters.
                    └── README.md
@@ -33,11 +38,13 @@ applies the definition and publishes the json result to a topic in pubsub.
 ## Technology Stack
 1. Cloud Firestore
 2. Cloud Pubsub
+3. Redis/[Memorystore](https://codelabs.developers.google.com/codelabs/cloud-spring-cache-memorystore/#0)
 
 ## Frameworks
 1. Spring Boot
 2. [Spring Data Cloud Firestore](https://docs.spring.io/spring-cloud-gcp/docs/current/reference/html/firestore.html)
    * [Reactive Repository](https://docs.spring.io/spring-cloud-gcp/docs/current/reference/html/firestore.html#_reactive_repositories)
+3. [Spring Caching with Redis/Memorystore](https://docs.spring.io/spring-cloud-gcp/docs/current/reference/html/memorystore.html#_cloud_memorystore_for_redis)
 
 ## Libraries
 1. [Apache Daffodil](https://daffodil.apache.org/)
@@ -168,6 +175,50 @@ To run this example two topics need to be created:
 #### Subscription
 The following subscriptions need to be created:
 1. A subscription to pull the binary data: data-input-binary-sub
+
+### Redis Setup
+
+#### Installation of Redis Emulator
+
+Please refer to this [doc](https://redis.io/docs/getting-started/) to install a
+redis emulator in your localhost
+
+#### Initialized the server
+
+```
+   $ redis-server
+```
+
+### Basic commands to access the data
+
+List all the keys
+
+```
+  $ redis-cli
+   127.0.0.1:6379> KEYS *
+   (empty array)
+```
+
+After running the example at least two times redis will show the processor in
+redis
+
+```  
+   127.0.0.1:6379> KEYS *
+   1) "processors::binary_example"
+
+```
+
+Delete a key
+
+```
+   127.0.0.1:6379> DEL "processors::binary_example"
+```
+
+Get a key
+
+```
+  127.0.0.1:6379> GET "processors::binary_example"
+```
 
 ## Usage
 ### Initialize the application

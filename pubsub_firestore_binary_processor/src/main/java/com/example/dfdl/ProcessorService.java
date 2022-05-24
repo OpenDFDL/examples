@@ -18,11 +18,21 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.concurrent.ConcurrentMapCache;
+import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 
-/** Initializes components, configurations and services. */
+/**
+ * Initializes components, caching, configurations and services.
+ */
 @SpringBootApplication
+// The @EnableCaching annotation triggers a post-processor that inspects every Spring bean for
+// the presence of caching annotations on public methods. If such an annotation is found, a proxy
+// is automatically created to intercept the method call and handle the caching behavior accordingly
+@EnableCaching
 public class ProcessorService {
 
   @Value("${server.port}")
@@ -32,7 +42,9 @@ public class ProcessorService {
     SpringApplication.run(ProcessorService.class, args);
   }
 
-  /** Runs on start up. Retrieves all the beans that were created by the {@link ProcessorService} */
+  /**
+   * Runs on start up. Retrieves all the beans that were created by the {@link ProcessorService}
+   */
   @Bean
   public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
 

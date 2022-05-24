@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:tns="http://example.com/dfdl/splitAndParse/"
+        targetNamespace="http://example.com/dfdl/splitAndParse/"
+        xmlns:dfdl="http://www.ogf.org/dfdl/dfdl-1.0/"
+        xmlns:fn="http://www.w3.org/2005/xpath-functions"
+        xmlns:daf="urn:ogf:dfdl:2013:imp:daffodil.apache.org:2018:ext"
+        xmlns:ef="http://www.ibm.com/dfdl/edi/un/edifact/SupplyChain/D03B">
+
+  <include schemaLocation="org/apache/daffodil/xsd/DFDLGeneralFormat.dfdl.xsd"/>
+
+  <import namespace="http://www.ibm.com/dfdl/edi/un/edifact/SupplyChain/D03B"
+     schemaLocation="EDIFACT-SupplyChain-D03B/EDIFACT-SupplyChain-Messages-D.03B.xsd"/>
+
+  <annotation>
+    <appinfo source="http://www.ogf.org/dfdl/">
+
+      <dfdl:format ref="tns:GeneralFormat"
+                   representation="binary" lengthUnits="bytes" encoding="ascii" lengthKind="implicit"/>
+
+    </appinfo>
+  </annotation>
+
+  <element name="edifact">
+        <complexType>
+          <sequence>
+            <element name="len" dfdl:lengthKind="explicit"
+                     dfdl:length="4"
+                     dfdl:outputValueCalc='{ dfdl:valueLength(../content, "bytes") + 4 }'>
+              <annotation>
+                <appinfo source="http://www.ogf.org/dfdl/">
+                  <dfdl:discriminator test="{ dfdl:checkConstraints(.) }"/>
+                </appinfo>
+              </annotation>
+              <simpleType>
+                <restriction base="xs:unsignedInt">
+                  <minInclusive value="5"/>
+                  <maxInclusive value="1000"/>
+                </restriction>
+              </simpleType>
+            </element>
+            <element name="content"
+                     dfdl:lengthKind="explicit" dfdl:length="{ ../len - 4 }">
+              <complexType>
+                <sequence>
+                  <element ref="ef:Interchange"/>
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+
+</schema>
