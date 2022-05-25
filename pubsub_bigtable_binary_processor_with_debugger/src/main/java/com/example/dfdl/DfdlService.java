@@ -15,34 +15,27 @@ package com.example.dfdl;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.List;
-import java.util.Scanner;
 import org.apache.daffodil.japi.Compiler;
 import org.apache.daffodil.japi.Daffodil;
 import org.apache.daffodil.japi.DataProcessor;
-import org.apache.daffodil.japi.Diagnostic;
 import org.apache.daffodil.japi.InvalidUsageException;
 import org.apache.daffodil.japi.ParseResult;
 import org.apache.daffodil.japi.ProcessorFactory;
-import org.apache.daffodil.japi.ValidationMode;
-import org.apache.daffodil.japi.debugger.TraceDebuggerRunner;
 import org.apache.daffodil.japi.infoset.InfosetOutputter;
 import org.apache.daffodil.japi.infoset.JsonInfosetOutputter;
 import org.apache.daffodil.japi.io.InputSourceDataInputStream;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 
 /**
  * Transforms messages using the {@link Daffodil} DFDL processor.
  *
- * The {@link Daffodil} object is a factory object to create a {@link Compiler}. The Compiler
+ * <p>The {@link Daffodil} object is a factory object to create a {@link Compiler}. The Compiler
  * provides a method to compile a provided DFDL schema into a {@link ProcessorFactory}, which
  * creates a {@link DataProcessor}.
  */
@@ -52,48 +45,17 @@ public class DfdlService {
   @Value("${debugger.usage:true}")
   boolean debuggerUsage;
 
-  // TODO: Save compiled DFDL schema in Memorystore so it is not compiled on every parse.
+  @Autowired private ProcessorDataService processorDataService;
+
+  /** Creates {@link DataProcessor} and parses an event message. */
   public String convertDataMessage(String message, DfdlDef dfdl)
       throws IOException, InvalidUsageException {
-    // DFDL definition file
-    File schemaFile = createSchemaFile(dfdl);
 
-    // Print the content of the file for troubleshooting
-    System.out.println("SchemaFile Content: ");
-    Scanner reader = new Scanner(schemaFile);
-    while (reader.hasNextLine()) {
-      String data = reader.nextLine();
-      System.out.println(data);
-    }
+    Processor processor = new Processor(dfdl.name, dfdl.definition);
+    DataProcessor dataProcessor = processorDataService.getDataProcessor(processor);
 
-    // Compile the de DFDL definition or schema file
-    Compiler dfdlCompiler = Daffodil.compiler();
-    ProcessorFactory processorFactory = dfdlCompiler.compileFile(schemaFile);
-    if (processorFactory.isError()) {
-      // Error compiling the schema. Printing diagnostic for troubleshooting.
-      List<Diagnostic> diags = processorFactory.getDiagnostics();
-      for (Diagnostic d : diags) {
-        System.err.println(d.getSomeMessage());
-      }
-      System.exit(1);
-    }
-    // "/" in the only support path.
-    DataProcessor dataProcessor = processorFactory.onPath("/")
-        .withValidationMode(ValidationMode.Off)
-        .withDebuggerRunner(new TraceDebuggerRunner())
-        .withDebugging(debuggerUsage);
-    ;
-
-    // Return result in a json format
+    // Result in a json format
     return jsonMessageResult(message, dataProcessor);
-  }
-
-  private File createSchemaFile(DfdlDef dfdlDef) throws IOException {
-    File schemaFile = new File(dfdlDef.getName());
-    FileWriter definitionWriter = new FileWriter(schemaFile);
-    definitionWriter.write(dfdlDef.getDefinition());
-    definitionWriter.close();
-    return schemaFile;
   }
 
   private String jsonMessageResult(String message, DataProcessor dataProcessor) {
@@ -113,10 +75,13 @@ public class DfdlService {
    * to determine the output representation of the infoset (e.g. Json, XML)
    *
    * @param dataProcessor provides the necessary functions to parse and unparse data.
+   * @param inputStream
+   * @param infosetOutputter
    * @return ParseResult that contains information about the parse, such as whether or not the
-   * processing succeeded any diagnostic information.
+   *     processing succeeded any diagnostic information.
    */
-  private ParseResult parse(DataProcessor dataProcessor,
+  private ParseResult parse(
+      DataProcessor dataProcessor,
       InputSourceDataInputStream inputStream,
       InfosetOutputter infosetOutputter) {
     // The DataProcessor.parse method is thread-safe and may be called multiple times without the
@@ -124,12 +89,6 @@ public class DfdlService {
     // requiring a unique instance per thread. An InfosetOutputter should call
     // InfosetOutputter.reset before reuse (or a new one should be allocated).
     return dataProcessor.parse(inputStream, infosetOutputter);
-  }
-
-  private InputSourceDataInputStream getFileInputStream(File dataFile)
-      throws FileNotFoundException {
-    FileInputStream fileInputStream = new java.io.FileInputStream(dataFile);
-    return new InputSourceDataInputStream(fileInputStream);
   }
 
   private InputSourceDataInputStream getMessageInputStream(String message) {
@@ -148,9 +107,10 @@ public class DfdlService {
     int messageLength = message.length();
     byte[] convertedMessage = new byte[messageLength / 2];
     for (int currentIndex = 0; currentIndex < messageLength; currentIndex += 2) {
-      convertedMessage[currentIndex / 2] = (byte) (
-          (Character.digit(message.charAt(currentIndex), 16) << 4)
-              + Character.digit(message.charAt(currentIndex + 1), 16));
+      convertedMessage[currentIndex / 2] =
+          (byte)
+              ((Character.digit(message.charAt(currentIndex), 16) << 4)
+                  + Character.digit(message.charAt(currentIndex + 1), 16));
     }
     return convertedMessage;
   }

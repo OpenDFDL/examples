@@ -7,6 +7,9 @@ The application send a request with the binary to process to a pubsub topic.
 The processor service subscribes to the topic, processes every message,
 applies the definition and publishes the json result to a topic in pubsub.
 
+## Before you start
+[Google’s open-source solution to DFDL Processing](https://cloud.google.com/blog/products/application-modernization/dfdl-processing-with-google-cloud)
+
 ## Project Structure
 
 ```
@@ -174,6 +177,50 @@ To run this example two topics need to be created:
 #### Subscription
 The following subscriptions need to be created:
 1. A subscription to pull the binary data: data-input-binary-sub
+
+### Redis Setup
+
+#### Installation of Redis Emulator
+
+Please refer to this [doc](https://redis.io/docs/getting-started/) to install a
+redis emulator in your localhost
+
+#### Initialized the server
+
+```
+   $ redis-server
+```
+
+### Basic commands to access the data
+
+List all the keys
+
+```
+  $ redis-cli
+   127.0.0.1:6379> KEYS *
+   (empty array)
+```
+
+After running the example at least two times redis will show the processor in
+redis
+
+```  
+   127.0.0.1:6379> KEYS *
+   1) "processors::binary_example"
+
+```
+
+Delete a key
+
+```
+   127.0.0.1:6379> DEL "processors::binary_example"
+```
+
+Get a key
+
+```
+  127.0.0.1:6379> GET "processors::binary_example"
+```
 
 ## Usage
 ### Initialize the application
