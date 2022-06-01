@@ -18,14 +18,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.concurrent.ConcurrentMapCache;
+import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 
 /**
- *  Initializes components, configurations and services.
+ * Initializes components, configurations and services.
  */
 @SpringBootApplication
-public class ProcessorService  {
+public class ProcessorService {
 
   @Value("${server.port}")
   String port;
@@ -49,5 +52,16 @@ public class ProcessorService  {
         System.out.println(beanName);
       }
     };
+  }
+
+  /**
+   * Configures cache store so that the dataProcessors are cached within processors
+   */
+  @Bean
+  public CacheManager cacheManager() {
+    SimpleCacheManager cacheManager = new SimpleCacheManager();
+    cacheManager.setCaches(Arrays.asList(
+        new ConcurrentMapCache("processors")));
+    return cacheManager;
   }
 }
