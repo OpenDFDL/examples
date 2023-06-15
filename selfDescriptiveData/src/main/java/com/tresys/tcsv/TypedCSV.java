@@ -59,7 +59,6 @@ public class TypedCSV {
 	static {
 		// Get a compiler instance and enable schema validation of schemas
 		c = Daffodil.compiler();
-		c.setValidateDFDLSchemas(true);
 	}
 
 	// Helper function to loop through any diagnostics from a Daffodil result

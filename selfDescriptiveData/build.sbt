@@ -9,8 +9,8 @@ scalaVersion := "2.12.15"
 Compile / run / mainClass := Some("com.tresys.tscv.TypedCSV")
 
 libraryDependencies ++= Seq(
-  "org.apache.daffodil" %% "daffodil-tdml-processor" % "3.2.1" % "test",
-  "org.apache.daffodil" %% "daffodil-japi" % "3.2.1",
+  "org.apache.daffodil" %% "daffodil-tdml-processor" % "3.5.0" % "test",
+  "org.apache.daffodil" %% "daffodil-japi" % "3.5.0",
   "junit" % "junit" % "4.13.2" % "test",
   "com.github.sbt" % "junit-interface" % "0.13.2" % "test"
 )

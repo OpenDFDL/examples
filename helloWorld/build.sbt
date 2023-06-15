@@ -14,7 +14,7 @@ useCoursier := false // Workaround becauuse retrieveManaged doesn't work in some
 Compile / run / mainClass := Some("HelloWorld")
 
 libraryDependencies ++= Seq(
-  "org.apache.daffodil" %% "daffodil-japi" % "3.2.1",
+  "org.apache.daffodil" %% "daffodil-japi" % "3.5.0",
   "jaxen" % "jaxen" % "1.2.0",
   "junit" % "junit" % "4.13.2" % "test",
   "com.github.sbt" % "junit-interface" % "0.13.2" % "test"

@@ -1,8 +1,8 @@
 import hexWords.MessageParser;
 import hexWords.MessageParser.Result;
 import org.apache.daffodil.tdml.Runner;
-import org.apache.daffodil.util.Misc;
-import org.apache.daffodil.xml.XMLUtils;
+import org.apache.daffodil.lib.util.Misc;
+import org.apache.daffodil.lib.xml.XMLUtils;
 import org.jdom2.Document;
 import org.jdom2.output.XMLOutputter;
 import org.junit.Test;

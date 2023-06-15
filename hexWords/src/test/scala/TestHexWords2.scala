@@ -1,6 +1,6 @@
 
-import org.apache.daffodil.util.Misc
-import org.apache.daffodil.xml.XMLUtils
+import org.apache.daffodil.lib.util.Misc
+import org.apache.daffodil.lib.xml.XMLUtils
 import org.junit.Test
 import org.junit.Assert._
 
