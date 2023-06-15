@@ -1,6 +1,7 @@
 import org.junit.Test;
 import static org.junit.Assert.*;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.PrintStream;
 
 public class TestXSLTCSV {
@@ -10,7 +11,10 @@ public class TestXSLTCSV {
       ByteArrayOutputStream myOut = new ByteArrayOutputStream();
       System.setOut(new PrintStream(myOut));
 
-      String[] args = {"src/test/resources/Dummy.xml", "src/main/resources/processCSV.xsl"};
+      File dummyXML = new File(this.getClass().getResource("Dummy.xml").toURI());
+      File csvXSL = new File(this.getClass().getResource("processCSV.xsl").toURI());
+
+      String[] args = {dummyXML.toString(), csvXSL.toString()};
       net.sf.saxon.Transform.main(args);
 
       String standardOutput = myOut.toString();
