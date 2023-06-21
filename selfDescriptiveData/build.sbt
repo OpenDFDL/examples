@@ -4,7 +4,7 @@ organization := "com.tresys"
 
 version := "0.1.0"
 
-scalaVersion := "2.12.15"
+scalaVersion := "2.12.18"
 
 Compile / run / mainClass := Some("com.tresys.tscv.TypedCSV")
 
