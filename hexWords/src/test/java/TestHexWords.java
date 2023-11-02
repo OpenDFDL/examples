@@ -74,7 +74,15 @@ public class TestHexWords {
      */
     private void compare(String expectedXML, Document doc) throws IOException {
         // throws an exception if there are any differences
-        XMLUtils.compareAndReport((Node) XML.loadString(expectedXML), toNode(doc), true, false, false);
+        XMLUtils.compareAndReport(
+            (Node) XML.loadString(expectedXML),
+            toNode(doc),
+            true, // ignore proc instructions
+            false, // do not check prefixes
+            false, // do not check namespaces
+            scala.Option.apply(null), // no float epsilon
+            scala.Option.apply(null) // no double epsilon
+        );
     }
 
     @Test public void testMessageParser1() throws IOException {
