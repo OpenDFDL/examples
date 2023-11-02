@@ -75,12 +75,9 @@ public class MessageParser {
         if (dp.isError()) {
             throw new CompileFailure(dpDiags);
         }
-        if (!pfDiags.isEmpty()) {
-            compilationWarnings = pfDiags;
-            compilationWarnings.addAll(dpDiags); // dpDiags might be empty. That's ok.
-        } else {
-            compilationWarnings = dpDiags; // dpDiags might be empty. That's ok.
-        }
+
+        // dpDiags contains warnings from both pf an dp
+        compilationWarnings = dpDiags;
     }
 
     public void setInputStream(InputStream inputStream) {
