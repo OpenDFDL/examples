@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<testSuite
+  suiteName="Superexp"
+  description="Superexp tests"
+  xmlns="http://www.ibm.com/xmlns/dfdl/testData"
+  xmlns:tdml="http://www.ibm.com/xmlns/dfdl/testData"
+  xmlns:dfdl="http://www.ogf.org/dfdl/dfdl-1.0/"
+  xmlns:fn="http://www.w3.org/2005/xpath-functions"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:ex="urn:example.com"
+  defaultRoundTrip="none">
+
+
+
+  <parserTestCase name="test_superexp_1" root="r" model="superexp.dfdl.xsd">
+    <document>
+      <documentPart type="bits">001</documentPart>
+    </document>
+    <infoset>
+      <dfdlInfoset>
+        <ex:r>
+          <physical>1</physical>
+          <!-- <bigger>1</bigger> -->
+          <ex:numDigits>1</ex:numDigits>
+        </ex:r>
+      </dfdlInfoset>
+    </infoset>
+  </parserTestCase>
+
+  <parserTestCase name="test_superexp_2" root="r" model="superexp.dfdl.xsd">
+    <document>
+      <documentPart type="bits">010</documentPart>
+    </document>
+    <infoset>
+      <dfdlInfoset>
+        <ex:r>
+          <physical>2</physical>
+         <!-- <bigger>256</bigger> -->
+          <numDigits>3</numDigits>
+        </ex:r>
+      </dfdlInfoset>
+    </infoset>
+  </parserTestCase>
+
+  <parserTestCase name="test_superexp_3" root="r" model="superexp.dfdl.xsd">
+    <document>
+      <documentPart type="bits">011</documentPart>
+    </document>
+    <infoset>
+      <dfdlInfoset>
+        <ex:r>
+          <physical>3</physical>
+          <numDigits>39</numDigits>
+        </ex:r>
+      </dfdlInfoset>
+    </infoset>
+  </parserTestCase>
+
+  <parserTestCase name="test_superexp_4" root="r" model="superexp.dfdl.xsd">
+    <document>
+      <documentPart type="bits">100</documentPart>
+    </document>
+    <infoset>
+      <dfdlInfoset>
+        <ex:r>
+          <physical>4</physical>
+          <numDigits>617</numDigits><!-- keep in mind, these are log10 of the number value -->
+        </ex:r>
+      </dfdlInfoset>
+    </infoset>
+  </parserTestCase>
+
+  <parserTestCase name="test_superexp_5" root="r" model="superexp.dfdl.xsd">
+    <document>
+      <documentPart type="bits">101</documentPart>
+    </document>
+    <infoset>
+      <dfdlInfoset>
+        <ex:r>
+          <physical>5</physical>
+          <numDigits>10922</numDigits>
+        </ex:r>
+      </dfdlInfoset>
+    </infoset>
+  </parserTestCase>
+
+  <parserTestCase name="test_superexp_6" root="r" model="superexp.dfdl.xsd">
+    <document>
+      <documentPart type="bits">110</documentPart>
+    </document>
+    <infoset>
+      <dfdlInfoset>
+        <ex:r>
+          <physical>6</physical>
+          <numDigits>217833</numDigits>
+        </ex:r>
+      </dfdlInfoset>
+    </infoset>
+  </parserTestCase>
+
+  <parserTestCase name="test_superexp_7" root="r" model="superexp.dfdl.xsd">
+    <document>
+      <documentPart type="bits">111</documentPart>
+    </document>
+    <infoset>
+      <dfdlInfoset>
+        <ex:r>
+          <physical>7</physical>
+          <numDigits>...</numDigits><!-- never finished - java out of heap space even with 48G memory -->
+        </ex:r>
+      </dfdlInfoset>
+    </infoset>
+  </parserTestCase>
+
+</testSuite>

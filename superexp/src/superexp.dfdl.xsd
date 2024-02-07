@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<schema
+  xmlns="http://www.w3.org/2001/XMLSchema"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:fn="http://www.w3.org/2005/xpath-functions"
+  xmlns:dfdl="http://www.ogf.org/dfdl/dfdl-1.0/"
+  xmlns:ex="urn:example.com"
+  targetNamespace="urn:example.com"
+  elementFormDefault="unqualified"
+  xmlns:dfdlx="http://www.ogf.org/dfdl/dfdl-1.0/extensions">
+
+  <include schemaLocation="/org/apache/daffodil/xsd/DFDLGeneralFormat.dfdl.xsd" />
+
+  <annotation>
+    <appinfo source="http://www.ogf.org/dfdl/">
+      <dfdl:format
+        ref="ex:GeneralFormat"
+        representation="binary"
+        lengthUnits="bits"
+        alignmentUnits="bits"
+        alignment="1"
+        dfdlx:parseUnparsePolicy="parseOnly"/>
+    </appinfo>
+  </annotation>
+
+  <element name="r">
+    <complexType>
+      <sequence>
+        <element name="physical" type="xs:unsignedInt" dfdl:lengthKind="explicit" dfdl:length="3"/>
+        <sequence dfdl:hiddenGroupRef="ex:blowup"/>
+
+        <element name="numDigits" type="xs:nonNegativeInteger"
+                 dfdl:inputValueCalc="{ fn:string-length(xs:string(../bigger))}"/>
+      </sequence>
+    </complexType>
+  </element>
+
+  <group name="blowup">
+    <sequence>
+      <element name="a1" minOccurs="0" maxOccurs="unbounded" dfdl:occursCountKind="expression"
+               dfdl:occursCount="{ ../physical }">
+        <complexType>
+          <sequence>
+            <element name="v" type="xs:nonNegativeInteger"
+                     dfdl:inputValueCalc="{
+                         if (dfdl:occursIndex() eq 1) then ../../physical else (../../a1[dfdl:occursIndex() - 1]/v * ../../physical)
+                     }"/>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="a1v" type="xs:nonNegativeInteger"
+                     dfdl:inputValueCalc="{ ../a1[fn:count(../a1)]/v }"/>
+      <element name="a2" minOccurs="0" maxOccurs="unbounded" dfdl:occursCountKind="expression"
+               dfdl:occursCount="{ ../a1v }">
+        <complexType>
+          <sequence>
+            <element name="v" type="xs:nonNegativeInteger"
+                     dfdl:inputValueCalc="{
+                         if (dfdl:occursIndex() eq 1) then ../../a1v else (../../a2[dfdl:occursIndex() - 1]/v * ../../a1v)
+            }"/>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="a2v" type="xs:nonNegativeInteger"
+               dfdl:inputValueCalc="{ ../a2[fn:count(../a2)]/v }"/>
+      <element name="bigger" type="xs:nonNegativeInteger"
+               dfdl:inputValueCalc="{ ../a2v }"/>
+    </sequence>
+  </group>
+
+</schema>

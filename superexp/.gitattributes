@@ -1,0 +1,5 @@
+test/** text=false
+test/**/*.tdml text=true
+test/**/*.xsd text=true
+test/**/*.xml text=true
+test/**/*.scala text=true
