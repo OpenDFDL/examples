@@ -52,6 +52,12 @@ public class HelloWorld {
         //
         Compiler c = Daffodil.compiler();
         ProcessorFactory pf = c.compileSource(schemaFileURL.toURI());
+
+        List<Diagnostic> diags1 = pf.getDiagnostics();
+        for (Diagnostic d : diags1) {
+            System.err.println(d.getSomeMessage());
+        }
+
         if (pf.isError()) {
             // didn't compile schema. Must be diagnostic of some sort. 
             List<Diagnostic> diags = pf.getDiagnostics();
@@ -60,6 +66,12 @@ public class HelloWorld {
             }
             System.exit(1);
         }
+
+        List<Diagnostic> diags2 = pf.getDiagnostics();
+        for (Diagnostic d : diags2) {
+            System.err.println(d.getSomeMessage());
+        }
+
         DataProcessor dp = pf.onPath("/");
         if (dp.isError()) {
             // didn't compile schema. Must be diagnostic of some sort.

@@ -7,11 +7,8 @@ version := "0.0.1"
 scalaVersion := "2.12.18"
 
 libraryDependencies ++= Seq(
-  "org.apache.daffodil" %% "daffodil-sapi" % "3.5.0",
-  "org.apache.daffodil" %% "daffodil-tdml-processor" % "3.5.0" % "test",
-  "junit" % "junit" % "4.13.2" % "test",
-  "com.github.sbt" % "junit-interface" % "0.13.2" % "test",
+  "org.apache.daffodil" %% "daffodil-sapi" % daffodilVersion.value,
   "com.ibm" % "dfdl-edifact" % "0.0.1-SNAPSHOT" % "test"
 )
 
-testOptions += Tests.Argument(TestFrameworks.JUnit, "-v")
+enablePlugins(DaffodilPlugin)
