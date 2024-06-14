@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?> 
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-	xmlns:dfdl="http://www.ogf.org/dfdl/dfdl-1.0/" xmlns:fn="http://www.w3.org/2005/xpath-functions">
+<xs:schema
+		xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		xmlns:dfdl="http://www.ogf.org/dfdl/dfdl-1.0/"
+		xmlns:fn="http://www.w3.org/2005/xpath-functions">
 
 	<!-- 
 		Author: Roger L. Costello
@@ -99,7 +101,7 @@
 				textNumberRoundingMode="roundUnnecessary" textNumberRoundingIncrement="1"
 				textStandardZeroRep="" textNumberCheckPolicy="strict" choiceLengthKind="implicit"
 				calendarCheckPolicy="strict" calendarLanguage="en" representation="text"
-				encoding="UTF-8" lengthKind="delimited" separator="" initiator="" terminator=""
+				encoding="UTF-8" fillByte="%#r00;" lengthKind="delimited" separator="" initiator="" terminator=""
 				ignoreCase="yes" occursCountKind="fixed" sequenceKind="ordered"
 				initiatedContent="no" separatorSuppressionPolicy="trailingEmptyStrict"
 				emptyValueDelimiterPolicy="both"/>

@@ -2,13 +2,15 @@ name := "dfdl-xslt-csv"
 
 organization := "com.example"
 
-version := "0.0.1"
+version := "0.0.2"
 
-scalaVersion := "2.12.18"
+scalaVersion := "2.12.19"
 
 libraryDependencies ++= Seq(
   "org.apache.daffodil" %% "daffodil-japi" % daffodilVersion.value,
-  "net.sf.saxon" % "Saxon-HE" % "10.6",
+  "xalan" % "xalan" % "2.7.3",
+  "xalan" % "serializer" % "2.7.3",
+  "commons-io" % "commons-io" % "2.16.1" % Test,
 )
 
 enablePlugins(DaffodilPlugin)
