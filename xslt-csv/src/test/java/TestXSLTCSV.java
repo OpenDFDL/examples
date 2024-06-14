@@ -1,29 +1,68 @@
 import org.junit.Test;
-import static org.junit.Assert.*;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.PrintStream;
+import org.w3c.dom.Document;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.stream.StreamSource;
+import java.io.InputStream;
+import java.io.StringReader;
+
+import static org.junit.Assert.assertEquals;
 
 public class TestXSLTCSV {
 
     @Test
-    public void testXSLTCSV1() throws Exception {
-      ByteArrayOutputStream myOut = new ByteArrayOutputStream();
-      System.setOut(new PrintStream(myOut));
+    public void testXSLTTransformation() throws Exception {
+        // Get the transformer
+        Transformer transformer = getTransformer();
 
-      File dummyXML = new File(this.getClass().getResource("Dummy.xml").toURI());
-      File csvXSL = new File(this.getClass().getResource("processCSV.xsl").toURI());
+        DOMResult domResult = new DOMResult();
+        transformer.transform(dummyInput(), domResult);
+        Document actualOutputDocument = (Document) domResult.getNode();
 
-      String[] args = {dummyXML.toString(), csvXSL.toString()};
-      net.sf.saxon.Transform.main(args);
+        // XmlUtils.writeDocumentToStream(actualOutputDocument, System.out);
 
-      String standardOutput = myOut.toString();
+        // Load and parse the expected output XML directly into a DOM Document
+        Document expectedOutputDocument = getExpectedDOM();
 
-      System.err.println(standardOutput);
-
-      assertTrue(standardOutput.contains("<data recordCount=\"8\">"));
-      assertTrue(standardOutput.contains("<chevy model=\"E350\" year=\"1997\"/><chevy model=\"Venture Extended Edition\" year=\"1999\"/><chevy model=\"Venture Extended Edition\" year=\"2000\"/>")); 
-
+        String actual = XmlUtils.documentToString(actualOutputDocument).replaceAll("\\s", "");
+        String expected = XmlUtils.documentToString(expectedOutputDocument).replaceAll("\\s", "");
+        assertEquals(expected, actual);
     }
 
+    private StreamSource dummyInput() {
+        String xmlInput = "<dummy/>";
+        return new StreamSource(new StringReader(xmlInput));
+    }
+
+    private Document getExpectedDOM() throws Exception {
+        InputStream expectedStream = getClass().getClassLoader().getResourceAsStream("expected.xml");
+        if (expectedStream == null) {
+            throw new RuntimeException("Cannot find expected.xml on the classpath");
+        }
+
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+        return documentBuilder.parse(expectedStream);
+    }
+
+    private Transformer getTransformer() throws Exception {
+        InputStream xsltStream = getClass().getClassLoader().getResourceAsStream("processCSV.xsl");
+        if (xsltStream == null) {
+            throw new RuntimeException("Cannot find processCSV.xsl on the classpath");
+        }
+
+        TransformerFactory factory = TransformerFactory.newInstance();
+        Source xsltSource = new StreamSource(xsltStream);
+        return factory.newTransformer(xsltSource);
+    }
 }
+
+
+//      assertTrue(standardOutput.contains("<data recordCount=\"8\">"));
+//      assertTrue(standardOutput.contains("<chevy model=\"E350\" year=\"1997\"/><chevy model=\"Venture Extended Edition\" year=\"1999\"/><chevy model=\"Venture Extended Edition\" year=\"2000\"/>"));
+//
