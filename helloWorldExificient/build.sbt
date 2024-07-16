@@ -4,8 +4,6 @@ organization := "com.owlcyberdefense"
 
 version := "0.1.0"
 
-scalaVersion := "2.12.18"
-
 // People use this project to study what the dependencies actually are needed
 // so having them put into lib_managed is helpful.
 retrieveManaged := true
