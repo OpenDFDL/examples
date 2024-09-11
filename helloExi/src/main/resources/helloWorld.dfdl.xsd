@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	   xmlns:tns="http://example.com/dfdl/helloworld/"
+	   targetNamespace="http://example.com/dfdl/helloworld/"
+           xmlns:dfdl="http://www.ogf.org/dfdl/dfdl-1.0/"
+           xmlns:fn="http://www.w3.org/2005/xpath-functions"
+           xmlns:daf="urn:ogf:dfdl:2013:imp:daffodil.apache.org:2018:ext">
+
+  <xs:include schemaLocation="org/apache/daffodil/xsd/DFDLGeneralFormat.dfdl.xsd" />
+  
+  <xs:annotation>
+    <xs:appinfo source="http://www.ogf.org/dfdl/">
+
+      <dfdl:format ref="GeneralFormat"
+		   representation="text" encoding="utf-8" lengthKind="delimited"/>
+
+    </xs:appinfo>
+  </xs:annotation>
+
+
+  <xs:element name="helloWorld">
+    <xs:complexType>
+      <xs:sequence>
+	<xs:element name="word" type="xs:string" maxOccurs="unbounded"
+		    dfdl:lengthKind="delimited" dfdl:terminator="%WSP+;"
+		    dfdl:occursCountKind="parsed"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+</xs:schema>
