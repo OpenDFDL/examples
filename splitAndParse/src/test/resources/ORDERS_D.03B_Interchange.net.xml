@@ -1,6 +1,6 @@
-<tns:edifact xmlns:D03B="http://www.ibm.com/dfdl/edi/un/edifact/SupplyChain/D03B"
+<sp:edifact xmlns:D03B="http://www.ibm.com/dfdl/edi/un/edifact/SupplyChain/D03B"
              xmlns:ef="http://www.ibm.com/dfdl/edi/un/edifact/SupplyChain/D03B"
-             xmlns:srv="http://www.ibm.com/dfdl/edi/un/service/4.1" xmlns:tns="http://example.com/dfdl/splitAndParse/"
+             xmlns:srv="http://www.ibm.com/dfdl/edi/un/service/4.1" xmlns:sp="http://example.com/dfdl/splitAndParse/"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <len>506</len>
   <content>
@@ -214,4 +214,4 @@
       </UNZ>
     </D03B:Interchange>
   </content>
-</tns:edifact>
+</sp:edifact>

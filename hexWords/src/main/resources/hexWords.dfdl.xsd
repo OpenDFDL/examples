@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:tns="http://example.com/dfdl/hexWords/"
+           xmlns:hxw="http://example.com/dfdl/hexWords/"
            targetNamespace="http://example.com/dfdl/hexWords/"
            xmlns:dfdl="http://www.ogf.org/dfdl/dfdl-1.0/"
            xmlns:fn="http://www.w3.org/2005/xpath-functions"
@@ -12,7 +12,7 @@
   <xs:annotation>
     <xs:appinfo source="http://www.ogf.org/dfdl/">
 
-      <dfdl:format ref="tns:GeneralFormat"
+      <dfdl:format ref="hxw:GeneralFormat"
                    representation="binary" encoding="X-DFDL-HEX-LSBF" lengthKind="implicit"
                    lengthUnits="bits" alignmentUnits="bits"
                    byteOrder="littleEndian" bitOrder="leastSignificantBitFirst"/>
@@ -61,19 +61,19 @@
 
    ]]> -->
 
-  <xs:element name="word" type="tns:wordType"/>
+  <xs:element name="word" type="hxw:wordType"/>
 
   <xs:element name="hexWords">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="word" type="tns:wordType" maxOccurs="unbounded"/>
+        <xs:element name="word" type="hxw:wordType" maxOccurs="unbounded"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
 
   <xs:complexType name="wordType">
     <xs:sequence>
-      <xs:group ref="tns:discriminateAnyData"/>
+      <xs:group ref="hxw:discriminateAnyData"/>
       <xs:choice>
         <!--
           Normal case. Message with a legal length, followed by that amount of data.

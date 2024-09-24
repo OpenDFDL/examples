@@ -3,10 +3,10 @@
 <xsl:stylesheet
  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
  version="1.0"
-xmlns:tns="http://example.com/dfdl/helloworld/"
+ xmlns:hw="http://example.com/dfdl/helloworld/"
 >
  <xsl:output method="xml" />
- <xsl:template match="/tns:helloWorld" >
+ <xsl:template match="/hw:helloWorld" >
    <xsl:copy>
      <xsl:apply-templates/>
    </xsl:copy>
