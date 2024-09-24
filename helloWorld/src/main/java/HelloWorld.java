@@ -144,7 +144,7 @@ public class HelloWorld {
         //
         System.out.println("**** Access with XPath *****");
 
-        XPathExpression<Content> xexp = setupXPath("/tns:helloWorld/word[2]/text()");
+        XPathExpression<Content> xexp = setupXPath("/hw:helloWorld/word[2]/text()");
         List<Content> clist = xexp.evaluate(doc);
         if (clist.size() == 0) {
             System.err.println("XPath produced nothing.");
@@ -246,7 +246,7 @@ public class HelloWorld {
         // A real application would hoist this boilerplate all out so it's done
         // once, not each time we need to evaluate an XPath expression.
         //
-        Namespace[] nss = { Namespace.getNamespace("tns", "http://example.com/dfdl/helloworld/") };
+        Namespace[] nss = { Namespace.getNamespace("hw", "http://example.com/dfdl/helloworld/") };
         XPathFactory xfactory = XPathFactory.instance();
         ContentFilter cf = new ContentFilter(ContentFilter.TEXT);
         Map<String, Object> variables = Collections.emptyMap();

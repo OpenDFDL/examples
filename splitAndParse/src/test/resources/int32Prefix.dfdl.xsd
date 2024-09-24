@@ -2,7 +2,7 @@
 
 <schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
         xmlns="http://www.w3.org/2001/XMLSchema"
-        xmlns:tns="http://example.com/dfdl/splitAndParse/"
+        xmlns:sp="http://example.com/dfdl/splitAndParse/"
         targetNamespace="http://example.com/dfdl/splitAndParse/"
         xmlns:dfdl="http://www.ogf.org/dfdl/dfdl-1.0/"
         xmlns:fn="http://www.w3.org/2005/xpath-functions"
@@ -13,7 +13,7 @@
   <annotation>
     <appinfo source="http://www.ogf.org/dfdl/">
 
-      <dfdl:format ref="tns:GeneralFormat"
+      <dfdl:format ref="sp:GeneralFormat"
                    representation="binary" lengthUnits="bytes" encoding="ascii" lengthKind="implicit"/>
 
     </appinfo>
@@ -24,7 +24,7 @@
 
    ]]> -->
 
-  <element name="try" type="tns:tryType"/>
+  <element name="try" type="sp:tryType"/>
 
   <complexType name="tryType">
     <choice>
