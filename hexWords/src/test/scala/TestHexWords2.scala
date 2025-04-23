@@ -65,12 +65,12 @@ class TestHexWords2 () {
     assertFalse(r.isProcessingError)
     assertTrue(r.isValidationError)
     compare("<word><illegal>0</illegal></word>", r.message)
-    assertTrue(r.diags.map((d) => d.getMessage).filter((m) => m.contains("Validation Error") && m.contains("illegal")).nonEmpty)
+    assertTrue(r.diags.map((d) => d.getMessage()).filter((m) => m.contains("Validation Error") && m.contains("illegal")).nonEmpty)
     r = mp.parse
     assertFalse(r.isProcessingError)
     assertTrue(r.isValidationError)
     compare("<word><illegal>0</illegal></word>", r.message)
-    assertTrue(r.diags.map((d) => d.getMessage).filter((m) => m.contains("Validation Error") && m.contains("illegal")).nonEmpty)
+    assertTrue(r.diags.map((d) => d.getMessage()).filter((m) => m.contains("Validation Error") && m.contains("illegal")).nonEmpty)
     r = mp.parse
     assertFalse(r.isProcessingError)
     assertFalse(r.isValidationError)
@@ -82,7 +82,7 @@ class TestHexWords2 () {
     r = mp.parse
     assertTrue(r.isProcessingError)
     assertTrue(r.diags.map( d => {
-      val m = d.getMessage.toLowerCase
+      val m = d.getMessage().toLowerCase
       m.contains("Parse Error".toLowerCase) && m.contains("Insufficient bits in data".toLowerCase) && m.contains("needed 20 bit".toLowerCase)
     }).nonEmpty)
 
