@@ -38,13 +38,13 @@ class MessageParser2(inputStream: InputStream, val schemaFileURL: URL, val rootN
   private def initDP(): (DataProcessor, Seq[Diagnostic]) = {
     //
     // First compile the DFDL Schema
-    val c = Daffodil.compiler
+    val c = Daffodil.compiler()
     val pf = c.compileSource(schemaFileURL.toURI).withDistinguishedRootNode(rootName, rootNS)
     val pfDiags = pf.getDiagnostics
-    if (pf.isError) throw new MessageParser2.CompileFailure(pfDiags)
+    if (pf.isError()) throw new MessageParser2.CompileFailure(pfDiags)
     val dp = pf.onPath("/").withValidationMode(ValidationMode.Limited)
     val dpDiags = dp.getDiagnostics
-    if (dp.isError) throw new MessageParser2.CompileFailure(dpDiags)
+    if (dp.isError()) throw new MessageParser2.CompileFailure(dpDiags)
     val compilationWarnings = if (!pfDiags.isEmpty) pfDiags else dpDiags // dpDiags might be empty. That's ok.
     (dp, compilationWarnings)
   }
@@ -70,10 +70,10 @@ class MessageParser2(inputStream: InputStream, val schemaFileURL: URL, val rootN
   def parse = {
     init() // in case user didn't call it.
     val res = dp.parse(dis, outputter)
-    val procErr = res.isProcessingError
-    val validationErr = res.isValidationError
+    val procErr = res.isProcessingError()
+    val validationErr = res.isValidationError()
     val diags = res.getDiagnostics
-    val doc = if (!procErr) outputter.getResult else null
+    val doc = if (!procErr) outputter.getResult() else null
     val r = new MessageParser2.Result(doc, diags, procErr, validationErr)
     outputter.reset()
     r
