@@ -3,6 +3,7 @@
 target
 target/
 lib_managed
+lib/
 src_managed
 resource_managed
 .history
@@ -12,6 +13,7 @@ resource_managed
 .bsp/
 errors
 project/errors
+.metals
 .~*#
 out
 .scala_dependencies
