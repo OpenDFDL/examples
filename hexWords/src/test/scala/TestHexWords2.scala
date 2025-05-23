@@ -65,12 +65,12 @@ class TestHexWords2 () {
     assertFalse(r.isProcessingError)
     assertTrue(r.isValidationError)
     compare("<word><illegal>0</illegal></word>", r.message)
-    assertTrue(r.diags.map((d) => d.getMessage()).filter((m) => m.contains("Validation Error") && m.contains("illegal")).nonEmpty)
+    assertTrue(r.diags.map((d) => d.toString).filter((m) => m.contains("Validation Error") && m.contains("illegal")).nonEmpty)
     r = mp.parse
     assertFalse(r.isProcessingError)
     assertTrue(r.isValidationError)
     compare("<word><illegal>0</illegal></word>", r.message)
-    assertTrue(r.diags.map((d) => d.getMessage()).filter((m) => m.contains("Validation Error") && m.contains("illegal")).nonEmpty)
+    assertTrue(r.diags.map((d) => d.toString).filter((m) => m.contains("Validation Error") && m.contains("illegal")).nonEmpty)
     r = mp.parse
     assertFalse(r.isProcessingError)
     assertFalse(r.isValidationError)

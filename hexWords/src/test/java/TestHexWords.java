@@ -126,16 +126,12 @@ public class TestHexWords {
         assertFalse(r.isProcessingError);
         assertTrue(r.isValidationError);
         compare("<word><illegal>0</illegal></word>", r.message);
-        assertTrue(r.diags.stream().map(d -> d.getMessage() ).anyMatch( m ->
-            m.contains("Validation Error") &&
-                    m.contains("illegal")));
+        assertTrue(r.diags.stream().map(d -> d.toString() ).anyMatch( m -> m.contains("Validation Error") && m.contains("illegal")));
         r = mp.parse();
         assertFalse(r.isProcessingError);
         assertTrue(r.isValidationError);
         compare("<word><illegal>0</illegal></word>", r.message);
-        assertTrue(r.diags.stream().map(d -> d.getMessage() ).anyMatch( m ->
-                m.contains("Validation Error") &&
-                        m.contains("illegal")));
+        assertTrue(r.diags.stream().map(d -> d.toString() ).anyMatch( m -> m.contains("Validation Error") && m.contains("illegal")));
         r = mp.parse();
         assertFalse(r.isProcessingError);
         assertFalse(r.isValidationError);
