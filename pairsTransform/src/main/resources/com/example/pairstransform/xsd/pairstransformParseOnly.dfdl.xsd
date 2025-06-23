@@ -49,7 +49,7 @@
 
   <group name="count">
     <sequence>
-      <element name="count" type="unsignedInt"
+      <element name="count" type="unsignedInt" dfdl:textNumberPattern="#0"
                   dfdl:terminator="%NL;"/>
     </sequence>
   </group>

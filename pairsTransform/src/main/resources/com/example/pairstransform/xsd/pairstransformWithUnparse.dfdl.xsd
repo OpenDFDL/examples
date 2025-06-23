@@ -25,7 +25,7 @@
   <xs:element name="latLon">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="count" type="xs:unsignedInt" dfdl:terminator="%NL;"/>
+        <xs:element name="count" type="xs:unsignedInt" dfdl:terminator="%NL;" dfdl:textNumberPattern="#0"/>
         <!--
           You might want to hide this group ref using dfdl:hiddenGroupRef.
 

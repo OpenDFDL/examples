@@ -1,8 +1,8 @@
 package com.owlcyberdefense
 
 
-import org.apache.daffodil.util.Misc
-import org.apache.daffodil.xml.XMLUtils
+import org.apache.daffodil.lib.util.Misc
+import org.apache.daffodil.lib.xml.XMLUtils
 import org.junit.Assert._
 import org.junit.Test
 
@@ -35,7 +35,7 @@ class TestSplitter () {
   @throws[IOException]
   def testSplitter1(): Unit = {
     val is = new ByteArrayInputStream(Misc.hex2Bytes("00 00 00 09 31 32 33 34 35".replace(" ", "")))
-    var mp = new Splitter(schemaFileURL, "message", null).toResultIterator(is)
+    var mp = new Splitter(schemaFileURL, "try", null).toResultIterator(is)
     var r = mp.next()
     assertFalse(r.isProcessingError)
     assertFalse(r.isValidationError)
@@ -47,7 +47,7 @@ class TestSplitter () {
   @throws[IOException]
   def testSplitter2(): Unit = {
     val is = new ByteArrayInputStream(Misc.hex2Bytes("00 00 00 09 31 32 33 34 35".replace(" ", "")))
-    var mp = new Splitter(schemaFileURL, "message", null)
+    var mp = new Splitter(schemaFileURL, "try", null)
     val iter = mp.toResultIterator(is)
     val Seq(r) = iter.toStream.toList
     assertFalse(r.isProcessingError)
@@ -60,7 +60,7 @@ class TestSplitter () {
   def testSplitter3(): Unit = {
     val is = new ByteArrayInputStream(
       Misc.hex2Bytes("00 00 00 09 31 32 33 34 35 00 00 00 09 31 32 33 34 35".replace(" ", "")))
-    var mp = new Splitter(schemaFileURL, "message", null)
+    var mp = new Splitter(schemaFileURL, "try", null)
     val iter = mp.toResultIterator(is)
     val Seq(r1, r2) = iter.toStream.toList
     assertFalse(r1.isProcessingError)
@@ -76,7 +76,7 @@ class TestSplitter () {
   def testSplitterBad1(): Unit = {
     val is = new ByteArrayInputStream(
       Misc.hex2Bytes("00".replace(" ", "")))
-    var mp = new Splitter(schemaFileURL, "message", null)
+    var mp = new Splitter(schemaFileURL, "try", null)
     val iter = mp.toResultIterator(is)
     val list = iter.toList
     println(list)
@@ -90,7 +90,7 @@ class TestSplitter () {
   def testSplitterBad2(): Unit = {
     val is = new ByteArrayInputStream(
       Misc.hex2Bytes("00 00".replace(" ", "")))
-    var mp = new Splitter(schemaFileURL, "message", null)
+    var mp = new Splitter(schemaFileURL, "try", null)
     val iter = mp.toResultIterator(is)
     val list = iter.toList
     println(list)

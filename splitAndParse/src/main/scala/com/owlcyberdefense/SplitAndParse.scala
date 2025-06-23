@@ -5,7 +5,9 @@ import org.apache.daffodil.sapi.io.InputSourceDataInputStream
 import java.io.ByteArrayInputStream
 import java.io.InputStream
 import java.net.URL
+import scala.collection.parallel.CollectionConverters._
 import scala.xml.Node
+
 
 /**
  * A utility class that takes two DFDL schemas. One is a lightweight splitter used to separate the

@@ -49,7 +49,6 @@ object SchemaCompiler {
   }
 
   case class CompileFailure(diags: Seq[Diagnostic])
-    extends Exception("DFDL Schema Compile Failure") {
-    override def toString() = getMessage() + "\n" + diags.mkString("\n")
+    extends Exception("DFDL Schema Compile Failure\n" + diags.mkString("\n")) {
   }
 }

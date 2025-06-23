@@ -1,13 +1,14 @@
 package com.owlcyberdefense
 
-import org.apache.daffodil.util.Misc
-import org.apache.daffodil.xml.XMLUtils
+import org.apache.daffodil.lib.util.Misc
+import org.apache.daffodil.lib.xml.XMLUtils
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
 import java.io.IOException
 import java.io.SequenceInputStream
 
+import scala.collection.parallel.CollectionConverters._
 
 class TestSplitEdifact () {
   var splitterSchemaFileURL = Misc.getRequiredResource("int32Prefix.dfdl.xsd").toURL

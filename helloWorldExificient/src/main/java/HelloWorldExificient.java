@@ -80,6 +80,11 @@ class ParseUnparseException extends Exception {
 public class HelloWorldExificient {
 
     public static void main(String[] args) throws IOException, URISyntaxException {
+        int rc = run(args);
+        System.exit(rc);
+    }
+
+    public static int run(String[] args) throws IOException, URISyntaxException {
 
     URL schemaFileURL = HelloWorldExificient.class.getResource("/helloWorld.dfdl.xsd");
     URL dataFileURL = HelloWorldExificient.class.getResource("/helloWorld.dat");
@@ -128,7 +133,7 @@ public class HelloWorldExificient {
         for (Diagnostic d : diags) {
         System.err.println(d.getSomeMessage());
         }
-        System.exit(1);
+        return 1;
     }
 
     DataProcessor dp = pf.onPath("/");
@@ -138,7 +143,7 @@ public class HelloWorldExificient {
         for (Diagnostic d : diags) {
         System.err.println(d.getSomeMessage());
         }
-        System.exit(1);
+        return 1;
     }
 
     //
@@ -155,7 +160,7 @@ public class HelloWorldExificient {
         exiFactory.setCodingMode(CodingMode.COMPRESSION);
     } catch (UnsupportedOption u) {
         System.err.println(u.getMessage());
-        System.exit(1);
+        return 1;
     }
 
     try {
@@ -164,7 +169,7 @@ public class HelloWorldExificient {
         exiFactory.setGrammars(grammar);
     } catch (EXIException e) {
         System.err.println("Error creating EXI grammar for schema aware encoding: " + e.getMessage());
-        System.exit(1);
+        return 1;
     }
 
     //
@@ -186,7 +191,7 @@ public class HelloWorldExificient {
         parseOs.close();
         parseIs.close();
         if (fatalError)
-            System.exit(1);
+            return 1;
     }
 
     byte[] exiBytes = parseOs.toByteArray();
@@ -222,7 +227,7 @@ public class HelloWorldExificient {
         transformIs.close();
         transformOs.close();
         if (fatalError)
-            System.exit(1);
+            return 1;
     }
 
     // If you need to also convert XML back into the native data format
@@ -255,7 +260,7 @@ public class HelloWorldExificient {
         unparseIs.close();
         unparseOs.close();
         if (fatalError)
-            System.exit(1);
+            return 1;
     }
 
     // if we get here, unparsing was successful.
@@ -282,6 +287,7 @@ public class HelloWorldExificient {
         System.out.print(String.format("%02X ", bi));
     }
     System.out.println("");
+    return 0;
     }
 
     public static void parseToEXI(DataProcessor dp, EXIFactory exiFactory, InputStream is, ByteArrayOutputStream os)

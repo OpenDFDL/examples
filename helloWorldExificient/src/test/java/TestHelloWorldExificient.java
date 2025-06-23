@@ -25,6 +25,7 @@ public class TestHelloWorldExificient {
     @Test
     public void testMain() throws IOException, URISyntaxException{
         String[] args = { "no args" };
-        HelloWorldExificient.main(args);
+        int rc = HelloWorldExificient.run(args);
+        Assert.assertEquals(rc, 0);
     }
 }
