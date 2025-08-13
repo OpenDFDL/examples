@@ -1,9 +1,10 @@
 package com.example.superexp
 
-import org.junit.AfterClass
-import org.junit.Test
-
 import org.apache.daffodil.tdml.Runner
+
+import org.junit.AfterClass
+import org.junit.Ignore
+import org.junit.Test
 
 object TestSuperexp {
   lazy val runner = Runner("/", "TestSuperexp.tdml")
@@ -27,9 +28,10 @@ class TestSuperexp {
 
   @Test def test_superexp_5(): Unit = { runner.runOneTest("test_superexp_5") }
 
+  @Ignore("Gets out of memory in java heap unless run with sbt -J-Xmx3g test")
   @Test def test_superexp_6(): Unit = { runner.runOneTest("test_superexp_6") }
 
-  // Gets out of memory in java heap even when run with sbt -J-Xmx48g test
-  // @Test def test_superexp_7(): Unit = { runner.runOneTest("test_superexp_7") }
+  @Ignore("Gets out of memory in java heap even when run with sbt -J-Xmx48g test")
+  @Test def test_superexp_7(): Unit = { runner.runOneTest("test_superexp_7") }
 
 }

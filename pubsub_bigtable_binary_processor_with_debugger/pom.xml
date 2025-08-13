@@ -26,7 +26,7 @@ limitations under the License. -->
   </parent>
   <groupId>com.example</groupId>
   <artifactId>mfol</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.2-SNAPSHOT</version>
   <name>mfol</name>
   <description>Demo project</description>
   <properties>
@@ -75,8 +75,8 @@ limitations under the License. -->
     </dependency>
     <dependency>
       <groupId>org.apache.daffodil</groupId>
-      <artifactId>daffodil-japi_2.12</artifactId>
-      <version>3.1.0</version>
+      <artifactId>daffodil-japi_2.13</artifactId>
+      <version>3.11.0</version>
     </dependency>
     <dependency>
       <groupId>com.google.cloud</groupId>
