@@ -10,7 +10,7 @@ object TestSuperexp {
   lazy val runner = Runner("/", "TestSuperexp.tdml")
 
   @AfterClass def shutDown: Unit = {
-    runner.reset
+    runner.reset()
   }
 }
 

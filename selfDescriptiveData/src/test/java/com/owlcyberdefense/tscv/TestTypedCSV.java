@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.tresys.tscv;
+package com.owlcyberdefense.tscv;
 
-import org.junit.Test;
 import org.junit.Assert;
+import org.junit.Test;
 
 public class TestTypedCSV {
 

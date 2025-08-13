@@ -13,8 +13,6 @@
  */
 package com.example.dfdl;
 
-import static com.google.cloud.bigtable.data.v2.models.Filters.FILTERS;
-
 import com.google.api.gax.rpc.ServerStream;
 import com.google.cloud.bigtable.data.v2.BigtableDataClient;
 import com.google.cloud.bigtable.data.v2.BigtableDataSettings;
@@ -22,9 +20,12 @@ import com.google.cloud.bigtable.data.v2.models.Filters.Filter;
 import com.google.cloud.bigtable.data.v2.models.Query;
 import com.google.cloud.bigtable.data.v2.models.Row;
 import com.google.cloud.bigtable.data.v2.models.RowCell;
-import java.io.IOException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+
+import static com.google.cloud.bigtable.data.v2.models.Filters.FILTERS;
 
 @Service
 public class BigtableService {
@@ -52,40 +53,40 @@ public class BigtableService {
     BigtableDataSettings settings = bigtableServer.getBigtableDataSetting();
     BigtableDataClient bigtableDataClient = bigtableServer.getBigtableClient(settings);
     Filter filterByName = FILTERS
-        .chain()
-        // Gets specific columns.
-        .filter(FILTERS.qualifier().exactMatch("name"))
-        .filter(FILTERS.value().exactMatch(name))
-        // each output row includes the N most recent cells from each column and omits all other
-        // cells from that column.
-        .filter(FILTERS.limit().cellsPerColumn(1));
+      .chain()
+      // Gets specific columns.
+      .filter(FILTERS.qualifier().exactMatch("name"))
+      .filter(FILTERS.value().exactMatch(name))
+      // each output row includes the N most recent cells from each column and omits all other
+      // cells from that column.
+      .filter(FILTERS.limit().cellsPerColumn(1));
     Query query = Query.create(tableId).filter(filterByName);
     ServerStream<Row> rows = bigtableDataClient.readRows(query);
 
     for (Row row : rows) {
       Row rowDefinition = bigtableDataClient.readRow(tableId, row.getKey());
-      RowCell cellName = rowDefinition.getCells( "dfdl", "name").get(0);
+      RowCell cellName = rowDefinition.getCells("dfdl", "name").get(0);
       System.out.printf(
-          "Family: %s    Qualifier: %s   Timestamp: %s   Value: %s%n",
-          cellName.getFamily(),
-          cellName.getQualifier().toStringUtf8(),
-          cellName.getTimestamp(),
-          cellName.getValue().toStringUtf8());
+        "Family: %s    Qualifier: %s   Timestamp: %s   Value: %s%n",
+        cellName.getFamily(),
+        cellName.getQualifier().toStringUtf8(),
+        cellName.getTimestamp(),
+        cellName.getValue().toStringUtf8());
 
       RowCell cellDefinition = rowDefinition.getCells("dfdl", "definition").get(0);
       System.out.printf(
-          "Family: %s    Qualifier: %s  Timestamp:%s   Value: %s%n",
-          cellDefinition.getFamily(),
-          cellDefinition.getQualifier().toStringUtf8(),
-          cellDefinition.getTimestamp(),
-          cellDefinition.getValue().toStringUtf8());
+        "Family: %s    Qualifier: %s  Timestamp:%s   Value: %s%n",
+        cellDefinition.getFamily(),
+        cellDefinition.getQualifier().toStringUtf8(),
+        cellDefinition.getTimestamp(),
+        cellDefinition.getValue().toStringUtf8());
       return buildDfdlDef(cellName, cellDefinition);
     }
 
     return new DfdlDef();
   }
 
-  private DfdlDef buildDfdlDef (RowCell name, RowCell definition) {
+  private DfdlDef buildDfdlDef(RowCell name, RowCell definition) {
     return new DfdlDef(name.getValue().toStringUtf8(), definition.getValue().toStringUtf8());
   }
 }

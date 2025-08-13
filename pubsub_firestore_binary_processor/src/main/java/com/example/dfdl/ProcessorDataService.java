@@ -13,19 +13,24 @@
  */
 package com.example.dfdl;
 
-import java.io.IOException;
-import org.apache.daffodil.japi.DataProcessor;
-import org.apache.daffodil.japi.InvalidUsageException;
+import org.apache.daffodil.api.DataProcessor;
+import org.apache.daffodil.api.exceptions.InvalidUsageException;
+import org.apache.daffodil.api.validation.ValidatorInitializationException;
+import org.apache.daffodil.api.validation.ValidatorNotRegisteredException;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
 
 @Component
 public class ProcessorDataService {
 
-  /** Returns a {@link DataProcessor} only if it doesn't find it the cache - processors. */
+  /**
+   * Returns a {@link DataProcessor} only if it doesn't find it the cache - processors.
+   */
   @Cacheable(value = "processors", key = "#processor.name")
   public DataProcessor getDataProcessor(Processor processor)
-      throws IOException, InvalidUsageException {
+    throws IOException, InvalidUsageException, ValidatorNotRegisteredException, ValidatorInitializationException {
     return processor.getDataProcessor();
   }
 }

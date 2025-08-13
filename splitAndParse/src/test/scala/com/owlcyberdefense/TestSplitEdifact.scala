@@ -5,14 +5,12 @@ import org.apache.daffodil.lib.xml.XMLUtils
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-import java.io.IOException
-import java.io.SequenceInputStream
+import java.io.{IOException, SequenceInputStream}
+import scala.collection.parallel.CollectionConverters.*
 
-import scala.collection.parallel.CollectionConverters._
-
-class TestSplitEdifact () {
-  var splitterSchemaFileURL = Misc.getRequiredResource("int32Prefix.dfdl.xsd").toURL
+class TestSplitEdifact() {
   val realSchemaFileURL = Misc.getRequiredResource("edifactWithLength.dfdl.xsd").toURL
+  var splitterSchemaFileURL = Misc.getRequiredResource("int32Prefix.dfdl.xsd").toURL
 
   @Test
   @throws[IOException]
@@ -20,7 +18,8 @@ class TestSplitEdifact () {
     val oneEdifactRecord = Misc.getRequiredResource("ORDERS_D.03B_Interchange.net").toURL
     val oneEdifactRecordXML = Misc.getRequiredResource("ORDERS_D.03B_Interchange.net.xml").toURL
 
-    val sp = new SplitAndParse(splitterSchemaFileURL, "try", null, realSchemaFileURL, "edifact", null)
+    val sp =
+      new SplitAndParse(splitterSchemaFileURL, "try", null, realSchemaFileURL, "edifact", null)
     println("Starting compilation")
     sp.init()
     println("Ending compilation")
@@ -36,14 +35,15 @@ class TestSplitEdifact () {
     val edifactRecords = Misc.getRequiredResource("ORDERS_D.03B_Interchange.net.2x").toURL
     val oneEdifactRecordXML = Misc.getRequiredResource("ORDERS_D.03B_Interchange.net.xml").toURL
 
-    val sp = new SplitAndParse(splitterSchemaFileURL, "try", null, realSchemaFileURL, "edifact", null)
+    val sp =
+      new SplitAndParse(splitterSchemaFileURL, "try", null, realSchemaFileURL, "edifact", null)
     println("Starting compilation")
     sp.init()
     println("Ending compilation")
     val mp = sp.dataIterator(edifactRecords.openStream())
     val n1 = mp.next()
     val xml = scala.xml.XML.load(oneEdifactRecordXML)
-     XMLUtils.compareAndReport(xml, n1)
+    XMLUtils.compareAndReport(xml, n1)
     val n2 = mp.next()
     XMLUtils.compareAndReport(xml, n2)
   }
@@ -51,17 +51,18 @@ class TestSplitEdifact () {
   @Test
   @throws[IOException]
   def testEDIFACT_Stream10x100Messages_ParseInParallel(): Unit = {
-    import collection.JavaConverters._
+    import collection.JavaConverters.*
 
-    val bulkFactor = 10 // increase for longer running test where you can really see the parallelism.
-    val streams = (1 to bulkFactor).toIterator map { _ =>
-      Misc.getRequiredResource("ORDERS_D.03B_Interchange.net.100x")
-      .toURL.openStream()
+    val bulkFactor =
+      10 // increase for longer running test where you can really see the parallelism.
+    val streams = (1 to bulkFactor).toIterator.map { _ =>
+      Misc.getRequiredResource("ORDERS_D.03B_Interchange.net.100x").toURL.openStream()
     }
     val edifactRecords = new SequenceInputStream(streams.asJavaEnumeration)
     val oneEdifactRecordXML = Misc.getRequiredResource("ORDERS_D.03B_Interchange.net.xml").toURL
 
-    val sp = new SplitAndParse(splitterSchemaFileURL, "try", null, realSchemaFileURL, "edifact", null)
+    val sp =
+      new SplitAndParse(splitterSchemaFileURL, "try", null, realSchemaFileURL, "edifact", null)
     println("Starting compilation")
     sp.init()
     println("Ending compilation")

@@ -2,13 +2,12 @@ name := "dfdl-hexWords"
 
 organization := "com.owlcyberdefense"
 
-version := "0.0.2"
+version := "0.1.0"
 
-daffodilVersion := "3.11.0"
+scalaVersion := "3.3.6"
 
 libraryDependencies ++= Seq(
-  "org.apache.daffodil" %% "daffodil-sapi" % daffodilVersion.value,
-  "org.apache.daffodil" %% "daffodil-japi" % daffodilVersion.value,
+  "org.apache.daffodil" %% "daffodil-core" % daffodilVersion.value
 )
 
 enablePlugins(DaffodilPlugin)

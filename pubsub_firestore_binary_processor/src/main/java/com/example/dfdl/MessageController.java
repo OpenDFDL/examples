@@ -13,13 +13,14 @@
  */
 package com.example.dfdl;
 
-import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
+
+import java.io.IOException;
 
 /**
  * Publishes message to a topic.
@@ -31,12 +32,13 @@ public class MessageController {
 
   @Value("${pubsub.message.controller.topic}")
   String pubsubMessageControllerTopic;
-  @Autowired private PubSubServer.PubsubOutboundGateway messagingGateway;
+  @Autowired
+  private PubSubServer.PubsubOutboundGateway messagingGateway;
 
   @PostMapping("/publish")
   public RedirectView publishMessage(@RequestParam("message") String message) throws IOException {
     System.out.println(
-        "Message being sent for processing to " + pubsubMessageControllerTopic + ":" + message);
+      "Message being sent for processing to " + pubsubMessageControllerTopic + ":" + message);
     messagingGateway.sendToPubsub(pubsubMessageControllerTopic, message);
     return new RedirectView("/");
   }

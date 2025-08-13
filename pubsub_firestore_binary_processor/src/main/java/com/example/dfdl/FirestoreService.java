@@ -19,7 +19,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class FirestoreService {
 
-  @Autowired private final DfdlDefRepository dfdlDefRepository;
+  @Autowired
+  private final DfdlDefRepository dfdlDefRepository;
 
   public FirestoreService(DfdlDefRepository dfdlDefRepository) {
     this.dfdlDefRepository = dfdlDefRepository;

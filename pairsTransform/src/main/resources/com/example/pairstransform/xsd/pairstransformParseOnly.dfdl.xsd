@@ -10,7 +10,7 @@
   targetNamespace="urn:pairstransform"
   elementFormDefault="unqualified">
 
-  <include schemaLocation="org/apache/daffodil/xsd/DFDLGeneralFormat.dfdl.xsd" />
+  <include schemaLocation="/org/apache/daffodil/xsd/DFDLGeneralFormat.dfdl.xsd" />
 
   <!--
   First we transform the input data into XML using DFDL

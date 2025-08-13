@@ -13,24 +13,25 @@
  */
 package com.example.dfdl;
 
+import org.apache.daffodil.api.Compiler;
+import org.apache.daffodil.api.Daffodil;
+import org.apache.daffodil.api.DataProcessor;
+import org.apache.daffodil.api.InputSourceDataInputStream;
+import org.apache.daffodil.api.ParseResult;
+import org.apache.daffodil.api.ProcessorFactory;
+import org.apache.daffodil.api.exceptions.InvalidUsageException;
+import org.apache.daffodil.api.infoset.InfosetOutputter;
+import org.apache.daffodil.api.validation.ValidatorInitializationException;
+import org.apache.daffodil.api.validation.ValidatorNotRegisteredException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import org.apache.daffodil.japi.Compiler;
-import org.apache.daffodil.japi.Daffodil;
-import org.apache.daffodil.japi.DataProcessor;
-import org.apache.daffodil.japi.InvalidUsageException;
-import org.apache.daffodil.japi.ParseResult;
-import org.apache.daffodil.japi.ProcessorFactory;
-import org.apache.daffodil.japi.infoset.InfosetOutputter;
-import org.apache.daffodil.japi.infoset.JsonInfosetOutputter;
-import org.apache.daffodil.japi.io.InputSourceDataInputStream;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.CacheManager;
-import org.springframework.stereotype.Service;
 
 /**
  * Transforms messages using the {@link Daffodil} DFDL processor.
@@ -52,7 +53,7 @@ public class DfdlService {
    * Creates {@link DataProcessor} and parses an event message.
    */
   public String convertDataMessage(String message, DfdlDef dfdl)
-      throws IOException, InvalidUsageException {
+    throws IOException, InvalidUsageException, ValidatorNotRegisteredException, ValidatorInitializationException {
 
     Processor processor = new Processor(dfdl.name, dfdl.definition);
     DataProcessor dataProcessor = processorDataService.getDataProcessor(processor);
@@ -66,7 +67,7 @@ public class DfdlService {
     InputSourceDataInputStream messageInputStreamJson = getMessageInputStream(message);
     // Set the JSON outputter
     OutputStream outputStream = new ByteArrayOutputStream();
-    JsonInfosetOutputter jsonOutputter = new JsonInfosetOutputter(outputStream, true);
+    InfosetOutputter jsonOutputter = Daffodil.newJsonInfosetOutputter(outputStream, true);
     // Parsing
     parse(dataProcessor, messageInputStreamJson, jsonOutputter);
     System.out.println(outputStream);
@@ -82,9 +83,9 @@ public class DfdlService {
    * processing succeeded any diagnostic information.
    */
   private ParseResult parse(
-      DataProcessor dataProcessor,
-      InputSourceDataInputStream inputStream,
-      InfosetOutputter infosetOutputter) {
+    DataProcessor dataProcessor,
+    InputSourceDataInputStream inputStream,
+    InfosetOutputter infosetOutputter) {
     // The DataProcessor.parse method is thread-safe and may be called multiple times without the
     // need to create other data processors. However, InfosetOutputter's are not thread safe,
     // requiring a unique instance per thread. An InfosetOutputter should call
@@ -94,7 +95,7 @@ public class DfdlService {
 
   private InputSourceDataInputStream getMessageInputStream(String message) {
     InputStream inputStream = new ByteArrayInputStream(messageToByteArray(message));
-    return new InputSourceDataInputStream(inputStream);
+    return Daffodil.newInputSourceDataInputStream(inputStream);
   }
 
   /**
@@ -109,9 +110,9 @@ public class DfdlService {
     byte[] convertedMessage = new byte[messageLength / 2];
     for (int currentIndex = 0; currentIndex < messageLength; currentIndex += 2) {
       convertedMessage[currentIndex / 2] =
-          (byte)
-              ((Character.digit(message.charAt(currentIndex), 16) << 4)
-                  + Character.digit(message.charAt(currentIndex + 1), 16));
+        (byte)
+          ((Character.digit(message.charAt(currentIndex), 16) << 4)
+            + Character.digit(message.charAt(currentIndex + 1), 16));
     }
     return convertedMessage;
   }

@@ -1,13 +1,12 @@
 package com.owlcyberdefense
 
-import org.apache.daffodil.sapi.io.InputSourceDataInputStream
-
-import java.io.ByteArrayInputStream
-import java.io.InputStream
+import java.io.{ ByteArrayInputStream, InputStream }
 import java.net.URL
-import scala.collection.parallel.CollectionConverters._
+import scala.collection.parallel.CollectionConverters.*
+import scala.jdk.CollectionConverters.CollectionHasAsScala
 import scala.xml.Node
 
+import org.apache.daffodil.api.{ Daffodil, InputSourceDataInputStream }
 
 /**
  * A utility class that takes two DFDL schemas. One is a lightweight splitter used to separate the
@@ -32,23 +31,16 @@ final class SplitAndParse(
   splitterRootNamespace: String,
   realSchemaFileURL: URL, // expensive parser that we want to run in parallel.
   realRootName: String,
-  realRootNS: String) {
+  realRootNS: String
+) {
 
-  private def parseOne(ba: Array[Byte]): Processor.Result = {
-    val bais = new ByteArrayInputStream(ba)
-    val dis = new InputSourceDataInputStream(bais)
-    val res = proc.parse(dis)
-    res
-  }
+  private lazy val (proc, compilationWarnings) =
+    SchemaCompiler.initDP(realSchemaFileURL, realRootName, realRootNS)
+  private val splitter =
+    new Splitter(splitterSchemaURL, splitterRootName, splitterRootNamespace)
 
   def init() =
     splitter.init() ++ compilationWarnings
-
-  private lazy val (proc, compilationWarnings) = SchemaCompiler.initDP(realSchemaFileURL, realRootName, realRootNS)
-
-  private def parallelism = 16 // spins up this many threads (max)
-
-  private val splitter = new Splitter(splitterSchemaURL, splitterRootName, splitterRootNamespace)
 
   /**
    * Creates an iterator of parsed scala.xml.Nodes that come from a parse of the data stream.
@@ -76,16 +68,29 @@ final class SplitAndParse(
 
     val players = splitterIter.sliding(parallelism, parallelism).map { _.par }
 
-    val parsed = players.map { player => player.map { ba =>
-      val r = parseOne(ba) // will happen in parallel
-      r
-    }}
+    val parsed = players.map { player =>
+      player.map { ba =>
+        val r = parseOne(ba) // will happen in parallel
+        r
+      }
+    }
 
-    val res = parsed.flatMap { parsedPlayer => parsedPlayer.map { r =>
-      val n = r.infoset
-      n
-    }}
+    val res = parsed.flatMap { parsedPlayer =>
+      parsedPlayer.map { r =>
+        val n = r.infoset
+        n
+      }
+    }
 
     res
   }
+
+  private def parseOne(ba: Array[Byte]): Processor.Result = {
+    val bais = new ByteArrayInputStream(ba)
+    val dis = Daffodil.newInputSourceDataInputStream(bais)
+    val res = proc.parse(dis)
+    res
+  }
+
+  private def parallelism = 16 // spins up this many threads (max)
 }

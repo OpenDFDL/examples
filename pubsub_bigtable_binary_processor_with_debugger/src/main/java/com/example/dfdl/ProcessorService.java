@@ -13,7 +13,6 @@
  */
 package com.example.dfdl;
 
-import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -23,6 +22,8 @@ import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+
+import java.util.Arrays;
 
 /**
  * Initializes components, configurations and services.
@@ -61,7 +62,7 @@ public class ProcessorService {
   public CacheManager cacheManager() {
     SimpleCacheManager cacheManager = new SimpleCacheManager();
     cacheManager.setCaches(Arrays.asList(
-        new ConcurrentMapCache("processors")));
+      new ConcurrentMapCache("processors")));
     return cacheManager;
   }
 }

@@ -144,7 +144,7 @@ public class TestHexWords {
         r = mp.parse();
         assertTrue(r.isProcessingError);
         assertTrue(r.diags.stream().anyMatch(d -> {
-            String m = d.getMessage().toLowerCase();
+            String m = d.toString().toLowerCase();
             return m.contains("Parse Error".toLowerCase()) &&
                     m.contains("Insufficient bits in data".toLowerCase()) &&
                     m.contains("needed 20 bit".toLowerCase());

@@ -1,29 +1,32 @@
 package com.owlcyberdefense
 
-import org.apache.daffodil.sapi.ValidationMode
-import org.apache.daffodil.sapi.Diagnostic
-import org.apache.daffodil.sapi.Daffodil
-
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
+import java.io.{ ByteArrayInputStream, ByteArrayOutputStream }
 import java.net.URL
 import java.nio.channels.Channels
+import scala.jdk.CollectionConverters.*
+
+import org.apache.daffodil.api.{ Daffodil, Diagnostic }
 
 object SchemaCompiler {
 
-  def initDP(schemaFileURL: URL, rootName: String, rootNS: String): (Processor, Seq[Diagnostic]) = {
+  def initDP(
+    schemaFileURL: URL,
+    rootName: String,
+    rootNS: String
+  ): (Processor, Seq[Diagnostic]) = {
     //
     // First compile the DFDL Schema
     val c = Daffodil.compiler
     val pf = c.compileSource(schemaFileURL.toURI).withDistinguishedRootNode(rootName, rootNS)
-    val pfDiags = pf.getDiagnostics
+    val pfDiags = pf.getDiagnostics.asScala.toSeq
     if (pf.isError) {
       throw new SchemaCompiler.CompileFailure(pfDiags)
     }
     var dp = pf.onPath("/")
-    val dpDiags = dp.getDiagnostics
+    val dpDiags = dp.getDiagnostics.asScala.toSeq
     if (dp.isError) throw new SchemaCompiler.CompileFailure(dpDiags)
-    val compilationWarnings = if (!pfDiags.isEmpty) pfDiags else dpDiags // dpDiags might be empty. That's ok.
+    val compilationWarnings =
+      if (!pfDiags.isEmpty) pfDiags else dpDiags // dpDiags might be empty. That's ok.
 
     //
     // Save and reload the schema.
@@ -44,11 +47,10 @@ object SchemaCompiler {
     }
 
     dp = Daffodil.compiler().reload(Channels.newChannel(new ByteArrayInputStream(savedDP)))
-    val proc = new Processor(dp.withValidationMode(ValidationMode.Limited))
+    val proc = new Processor(dp.withValidation("daffodil"))
     (proc, compilationWarnings)
   }
 
   case class CompileFailure(diags: Seq[Diagnostic])
-    extends Exception("DFDL Schema Compile Failure\n" + diags.mkString("\n")) {
-  }
+    extends Exception("DFDL Schema Compile Failure\n" + diags.mkString("\n")) {}
 }

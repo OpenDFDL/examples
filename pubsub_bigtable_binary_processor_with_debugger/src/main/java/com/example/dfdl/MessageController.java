@@ -13,7 +13,6 @@
  */
 package com.example.dfdl;
 
-import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,9 +20,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
+import java.io.IOException;
+
 /**
  * Publishes message to a topic.
- *
+ * <p>
  * Usage: curl --data "message=0000000500779e8c169a54dd0a1b4a3fce2946f6" localhost:8081/publish
  */
 @RestController
@@ -37,7 +38,7 @@ public class MessageController {
 
   @PostMapping("/publish")
   public RedirectView publishMessage(@RequestParam("message") String message)
-      throws IOException {
+    throws IOException {
     System.out.println("Message being sent  for processing: " + message);
     messagingGateway.sendToPubsub(pubsubMessageControllerTopic, message);
     return new RedirectView("/");

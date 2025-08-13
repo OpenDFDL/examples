@@ -13,19 +13,21 @@
  */
 package com.example.dfdl;
 
+import org.apache.daffodil.api.Compiler;
+import org.apache.daffodil.api.Daffodil;
+import org.apache.daffodil.api.DataProcessor;
+import org.apache.daffodil.api.Diagnostic;
+import org.apache.daffodil.api.ProcessorFactory;
+import org.apache.daffodil.api.debugger.InteractiveDebuggerRunnerFactory;
+import org.apache.daffodil.api.exceptions.InvalidUsageException;
+import org.apache.daffodil.api.validation.ValidatorInitializationException;
+import org.apache.daffodil.api.validation.ValidatorNotRegisteredException;
+import org.springframework.beans.factory.annotation.Value;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
-import org.apache.daffodil.japi.Compiler;
-import org.apache.daffodil.japi.Daffodil;
-import org.apache.daffodil.japi.DataProcessor;
-import org.apache.daffodil.japi.Diagnostic;
-import org.apache.daffodil.japi.InvalidUsageException;
-import org.apache.daffodil.japi.ProcessorFactory;
-import org.apache.daffodil.japi.ValidationMode;
-import org.apache.daffodil.japi.debugger.TraceDebuggerRunner;
-import org.springframework.beans.factory.annotation.Value;
 
 public class Processor {
 
@@ -56,7 +58,7 @@ public class Processor {
     this.definition = definition;
   }
 
-  DataProcessor getDataProcessor() throws IOException, InvalidUsageException {
+  DataProcessor getDataProcessor() throws IOException, InvalidUsageException, ValidatorNotRegisteredException, ValidatorInitializationException {
     System.out.println("Enter - Data Processor no in processors cached");
     // DFDL definition file
     File schemaFile = createSchemaFile(name, definition);
@@ -68,17 +70,17 @@ public class Processor {
       // Error compiling the schema. Printing diagnostic for troubleshooting.
       List<Diagnostic> diags = processorFactory.getDiagnostics();
       for (Diagnostic d : diags) {
-        System.err.println(d.getSomeMessage());
+        System.err.println(d.toString());
       }
       System.exit(1);
     }
     // "/" in the only support path.
     DataProcessor dataProcessor =
-        processorFactory
-            .onPath("/")
-            .withValidationMode(ValidationMode.Off)
-            .withDebuggerRunner(new TraceDebuggerRunner())
-            .withDebugging(debuggerUsage);
+      processorFactory
+        .onPath("/")
+        .withValidation("off")
+        .withDebuggerRunner(InteractiveDebuggerRunnerFactory.newTraceDebuggerRunner(System.out))
+        .withDebugging(debuggerUsage);
     return dataProcessor;
   }
 

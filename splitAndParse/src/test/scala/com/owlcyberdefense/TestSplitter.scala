@@ -1,21 +1,75 @@
 package com.owlcyberdefense
 
+import java.io.{ ByteArrayInputStream, IOException }
+import java.util.Objects
+import scala.xml.{ Node, XML }
 
 import org.apache.daffodil.lib.util.Misc
 import org.apache.daffodil.lib.xml.XMLUtils
-import org.junit.Assert._
+
+import org.junit.Assert.*
 import org.junit.Test
 
-import java.io.ByteArrayInputStream
-import java.io.IOException
-import java.util.Objects
-import scala.xml.Node
-import scala.xml.XML
+class TestSplitter() {
+  var schemaFileURL =
+    Objects.requireNonNull(Misc.getRequiredResource("int32Prefix.dfdl.xsd").toURL)
 
+  @Test
+  @throws[IOException]
+  def testSplitter1(): Unit = {
+    val is = new ByteArrayInputStream(
+      Misc.hex2Bytes("00 00 00 09 31 32 33 34 35".replace(" ", ""))
+    )
+    var mp = new Splitter(schemaFileURL, "try", null).toResultIterator(is)
+    var r = mp.next()
+    assertFalse(r.isProcessingError)
+    assertFalse(r.isValidationError)
+    compare(
+      "<try><message><len>9</len><content>3132333435</content></message></try>",
+      r.infoset
+    )
+    assertFalse(mp.hasNext)
+  }
 
-class TestSplitter () {
-  var schemaFileURL = Objects.requireNonNull(Misc.getRequiredResource("int32Prefix.dfdl.xsd").toURL)
+  @Test
+  @throws[IOException]
+  def testSplitter2(): Unit = {
+    val is = new ByteArrayInputStream(
+      Misc.hex2Bytes("00 00 00 09 31 32 33 34 35".replace(" ", ""))
+    )
+    var mp = new Splitter(schemaFileURL, "try", null)
+    val iter = mp.toResultIterator(is)
+    val Seq(r) = iter.toStream.toList
+    assertFalse(r.isProcessingError)
+    assertFalse(r.isValidationError)
+    compare(
+      "<try><message><len>9</len><content>3132333435</content></message></try>",
+      r.infoset
+    )
+  }
 
+  @Test
+  @throws[IOException]
+  def testSplitter3(): Unit = {
+    val is = new ByteArrayInputStream(
+      Misc.hex2Bytes("00 00 00 09 31 32 33 34 35 00 00 00 09 31 32 33 34 35".replace(" ", ""))
+    )
+    var mp = new Splitter(schemaFileURL, "try", null)
+    val iter = mp.toResultIterator(is)
+    val Seq(r1, r2) = iter.toStream.toList
+    assertFalse(r1.isProcessingError)
+    assertFalse(r1.isValidationError)
+    compare(
+      "<try><message><len>9</len><content>3132333435</content></message></try>",
+      r1.infoset
+    )
+    assertFalse(r2.isProcessingError)
+    assertFalse(r2.isValidationError)
+    compare(
+      "<try><message><len>9</len><content>3132333435</content></message></try>",
+      r2.infoset
+    )
+  }
 
   /**
    * Use Daffodil compare utility to compare XML results.
@@ -33,54 +87,16 @@ class TestSplitter () {
 
   @Test
   @throws[IOException]
-  def testSplitter1(): Unit = {
-    val is = new ByteArrayInputStream(Misc.hex2Bytes("00 00 00 09 31 32 33 34 35".replace(" ", "")))
-    var mp = new Splitter(schemaFileURL, "try", null).toResultIterator(is)
-    var r = mp.next()
-    assertFalse(r.isProcessingError)
-    assertFalse(r.isValidationError)
-    compare("<try><message><len>9</len><content>3132333435</content></message></try>", r.infoset)
-    assertFalse(mp.hasNext)
-  }
-
-  @Test
-  @throws[IOException]
-  def testSplitter2(): Unit = {
-    val is = new ByteArrayInputStream(Misc.hex2Bytes("00 00 00 09 31 32 33 34 35".replace(" ", "")))
-    var mp = new Splitter(schemaFileURL, "try", null)
-    val iter = mp.toResultIterator(is)
-    val Seq(r) = iter.toStream.toList
-    assertFalse(r.isProcessingError)
-    assertFalse(r.isValidationError)
-    compare("<try><message><len>9</len><content>3132333435</content></message></try>", r.infoset)
-  }
-
-  @Test
-  @throws[IOException]
-  def testSplitter3(): Unit = {
-    val is = new ByteArrayInputStream(
-      Misc.hex2Bytes("00 00 00 09 31 32 33 34 35 00 00 00 09 31 32 33 34 35".replace(" ", "")))
-    var mp = new Splitter(schemaFileURL, "try", null)
-    val iter = mp.toResultIterator(is)
-    val Seq(r1, r2) = iter.toStream.toList
-    assertFalse(r1.isProcessingError)
-    assertFalse(r1.isValidationError)
-    compare("<try><message><len>9</len><content>3132333435</content></message></try>", r1.infoset)
-    assertFalse(r2.isProcessingError)
-    assertFalse(r2.isValidationError)
-    compare("<try><message><len>9</len><content>3132333435</content></message></try>", r2.infoset)
-  }
-
-  @Test
-  @throws[IOException]
   def testSplitterBad1(): Unit = {
-    val is = new ByteArrayInputStream(
-      Misc.hex2Bytes("00".replace(" ", "")))
+    val is = new ByteArrayInputStream(Misc.hex2Bytes("00".replace(" ", "")))
     var mp = new Splitter(schemaFileURL, "try", null)
     val iter = mp.toResultIterator(is)
     val list = iter.toList
     println(list)
-    val hd :: tail = list
+    val (hd, tail) = list match {
+      case (hd: Processor.Result) :: (tail: List[Processor.Result]) => (hd, tail)
+      case _ => fail("Expected a head and tail"); (null, null)
+    }
     assertFalse(hd.isProcessingError)
     assertTrue(hd.isValidationError)
   }
@@ -88,8 +104,7 @@ class TestSplitter () {
   @Test
   @throws[IOException]
   def testSplitterBad2(): Unit = {
-    val is = new ByteArrayInputStream(
-      Misc.hex2Bytes("00 00".replace(" ", "")))
+    val is = new ByteArrayInputStream(Misc.hex2Bytes("00 00".replace(" ", "")))
     var mp = new Splitter(schemaFileURL, "try", null)
     val iter = mp.toResultIterator(is)
     val list = iter.toList

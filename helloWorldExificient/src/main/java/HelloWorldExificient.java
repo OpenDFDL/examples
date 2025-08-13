@@ -14,52 +14,43 @@
  * limitations under the License.
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import com.siemens.ct.exi.core.CodingMode;
+import com.siemens.ct.exi.core.EXIFactory;
+import com.siemens.ct.exi.core.EncodingOptions;
+import com.siemens.ct.exi.core.exceptions.EXIException;
+import com.siemens.ct.exi.core.exceptions.UnsupportedOption;
+import com.siemens.ct.exi.core.grammars.Grammars;
+import com.siemens.ct.exi.core.helpers.DefaultEXIFactory;
+import com.siemens.ct.exi.grammars.GrammarFactory;
+import com.siemens.ct.exi.main.api.sax.EXIResult;
+import com.siemens.ct.exi.main.api.sax.EXISource;
+import org.apache.daffodil.api.Compiler;
+import org.apache.daffodil.api.Daffodil;
+import org.apache.daffodil.api.DaffodilParseXMLReader;
+import org.apache.daffodil.api.DaffodilUnparseContentHandler;
+import org.apache.daffodil.api.DaffodilXMLEntityResolver;
+import org.apache.daffodil.api.DataProcessor;
+import org.apache.daffodil.api.Diagnostic;
+import org.apache.daffodil.api.InputSourceDataInputStream;
+import org.apache.daffodil.api.ParseResult;
+import org.apache.daffodil.api.ProcessorFactory;
+import org.apache.daffodil.api.UnparseResult;
+import org.apache.daffodil.api.exceptions.DaffodilUnparseErrorSAXException;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-
-import org.xml.sax.XMLReader;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.XMLReaderFactory;
-
-import com.siemens.ct.exi.core.EXIFactory;
-import com.siemens.ct.exi.core.exceptions.EXIException;
-import com.siemens.ct.exi.core.exceptions.UnsupportedOption;
-import com.siemens.ct.exi.core.helpers.DefaultEXIFactory;
-import com.siemens.ct.exi.grammars.GrammarFactory;
-import com.siemens.ct.exi.core.grammars.Grammars;
-import com.siemens.ct.exi.main.api.sax.EXIResult;
-import com.siemens.ct.exi.main.api.sax.EXISource;
-import com.siemens.ct.exi.core.EncodingOptions;
-import com.siemens.ct.exi.core.CodingMode;
-
-import org.apache.daffodil.japi.Compiler;
-import org.apache.daffodil.japi.Daffodil;
-import org.apache.daffodil.japi.DataProcessor;
-import org.apache.daffodil.japi.Diagnostic;
-import org.apache.daffodil.japi.ParseResult;
-import org.apache.daffodil.japi.ProcessorFactory;
-import org.apache.daffodil.japi.UnparseResult;
-import org.apache.daffodil.japi.DaffodilParseXMLReader;
-import org.apache.daffodil.japi.DaffodilUnparseContentHandler;
-import org.apache.daffodil.japi.DaffodilUnparseErrorSAXException;
-import org.apache.daffodil.japi.DaffodilXMLEntityResolver;
-import org.apache.daffodil.japi.infoset.JDOMInfosetInputter;
-import org.apache.daffodil.japi.io.InputSourceDataInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.List;
 
 /**
  * Demonstrates using the Daffodil DFDL processor to
@@ -72,19 +63,19 @@ import org.apache.daffodil.japi.io.InputSourceDataInputStream;
  */
 
 class ParseUnparseException extends Exception {
-    public ParseUnparseException(String errorMessage) {
-        super(errorMessage);
-    }
+  public ParseUnparseException(String errorMessage) {
+    super(errorMessage);
+  }
 }
 
 public class HelloWorldExificient {
 
-    public static void main(String[] args) throws IOException, URISyntaxException {
-        int rc = run(args);
-        System.exit(rc);
-    }
+  public static void main(String[] args) throws IOException, URISyntaxException {
+    int rc = run(args);
+    System.exit(rc);
+  }
 
-    public static int run(String[] args) throws IOException, URISyntaxException {
+  public static int run(String[] args) throws IOException, URISyntaxException {
 
     URL schemaFileURL = HelloWorldExificient.class.getResource("/helloWorld.dfdl.xsd");
     URL dataFileURL = HelloWorldExificient.class.getResource("/helloWorld.dat");
@@ -96,7 +87,7 @@ public class HelloWorldExificient {
     // Print out original data as text and hex
     //
     String encoding = "iso-8859-1"; // an encoding where every byte value is
-                    // a legal character.
+    // a legal character.
 
     InputStream originalData = dataFileURL.openStream();
     byte[] ba = new byte[originalData.available()];
@@ -108,17 +99,17 @@ public class HelloWorldExificient {
     String line;
     System.out.println("Original data as text in encoding " + encoding + ":");
     while ((line = r.readLine()) != null) {
-        System.out.println(line);
+      System.out.println(line);
     }
 
     // If your data format was binary, then you can print it out as hex
     // just to get a look at it.
     System.out.println("Original data as hex:");
     for (byte b : ba) {
-        int bi = b; // b could be negative, but we want the hex to look like
-            // it was unsigned.
-        bi = bi & 0xFF;
-        System.out.print(String.format("%02X ", bi));
+      int bi = b; // b could be negative, but we want the hex to look like
+      // it was unsigned.
+      bi = bi & 0xFF;
+      System.out.print(String.format("%02X ", bi));
     }
     System.out.println("");
 
@@ -128,22 +119,22 @@ public class HelloWorldExificient {
     Compiler c = Daffodil.compiler();
     ProcessorFactory pf = c.compileSource(schemaFileURL.toURI());
     if (pf.isError()) {
-        // didn't compile schema. Must be diagnostic of some sort.
-        List<Diagnostic> diags = pf.getDiagnostics();
-        for (Diagnostic d : diags) {
-        System.err.println(d.getSomeMessage());
-        }
-        return 1;
+      // didn't compile schema. Must be diagnostic of some sort.
+      List<Diagnostic> diags = pf.getDiagnostics();
+      for (Diagnostic d : diags) {
+        System.err.println(d.toString());
+      }
+      return 1;
     }
 
     DataProcessor dp = pf.onPath("/");
     if (dp.isError()) {
-        // didn't get a DataProcessor. Must be diagnostic of some sort.
-        List<Diagnostic> diags = dp.getDiagnostics();
-        for (Diagnostic d : diags) {
-        System.err.println(d.getSomeMessage());
-        }
-        return 1;
+      // didn't get a DataProcessor. Must be diagnostic of some sort.
+      List<Diagnostic> diags = dp.getDiagnostics();
+      for (Diagnostic d : diags) {
+        System.err.println(d.toString());
+      }
+      return 1;
     }
 
     //
@@ -151,25 +142,25 @@ public class HelloWorldExificient {
     //
     EXIFactory exiFactory = DefaultEXIFactory.newInstance();
     try {
-        // Include information about how the EXI is encoded in the EXI file,
-        // allowing for interop between different implementations of EXI.
-        // This is also where you can set other options, such as
-        // compression, entity reference handling, and XSI:nil handling
-        exiFactory.getEncodingOptions().setOption(EncodingOptions.INCLUDE_OPTIONS);
-        // Enable compression
-        exiFactory.setCodingMode(CodingMode.COMPRESSION);
+      // Include information about how the EXI is encoded in the EXI file,
+      // allowing for interop between different implementations of EXI.
+      // This is also where you can set other options, such as
+      // compression, entity reference handling, and XSI:nil handling
+      exiFactory.getEncodingOptions().setOption(EncodingOptions.INCLUDE_OPTIONS);
+      // Enable compression
+      exiFactory.setCodingMode(CodingMode.COMPRESSION);
     } catch (UnsupportedOption u) {
-        System.err.println(u.getMessage());
-        return 1;
+      System.err.println(u.toString());
+      return 1;
     }
 
     try {
-        GrammarFactory grammarFactory = GrammarFactory.newInstance();
-        Grammars grammar = grammarFactory.createGrammars(schemaFileURL.toString(), DaffodilXMLEntityResolver.getXMLEntityResolver());
-        exiFactory.setGrammars(grammar);
+      GrammarFactory grammarFactory = GrammarFactory.newInstance();
+      Grammars grammar = grammarFactory.createGrammars(schemaFileURL.toString(), DaffodilXMLEntityResolver.getXMLEntityResolver());
+      exiFactory.setGrammars(grammar);
     } catch (EXIException e) {
-        System.err.println("Error creating EXI grammar for schema aware encoding: " + e.getMessage());
-        return 1;
+      System.err.println("Error creating EXI grammar for schema aware encoding: " + e.toString());
+      return 1;
     }
 
     //
@@ -180,27 +171,27 @@ public class HelloWorldExificient {
     ByteArrayOutputStream parseOs = new ByteArrayOutputStream();
 
     try {
-        parseToEXI(dp, exiFactory, parseIs, parseOs);
+      parseToEXI(dp, exiFactory, parseIs, parseOs);
     } catch (EXIException e) {
-        System.err.println("Error creating EXIResult: " + e.getMessage());
-        fatalError = true;
+      System.err.println("Error creating EXIResult: " + e.getMessage());
+      fatalError = true;
     } catch (ParseUnparseException p) {
-        // We have already printed out the error messages in parseToEXI
-        fatalError = true;
+      // We have already printed out the error messages in parseToEXI
+      fatalError = true;
     } finally {
-        parseOs.close();
-        parseIs.close();
-        if (fatalError)
-            return 1;
+      parseOs.close();
+      parseIs.close();
+      if (fatalError)
+        return 1;
     }
 
     byte[] exiBytes = parseOs.toByteArray();
     System.out.println("Parsed EXI data as hex:");
     for (byte b : exiBytes) {
-        int bi = b; // b could be negative, but we want the hex to look like
-            // it was unsigned.
-        bi = bi & 0xFF;
-        System.out.print(String.format("%02X ", bi));
+      int bi = b; // b could be negative, but we want the hex to look like
+      // it was unsigned.
+      bi = bi & 0xFF;
+      System.out.print(String.format("%02X ", bi));
     }
     System.out.println("");
 
@@ -216,18 +207,18 @@ public class HelloWorldExificient {
     ByteArrayInputStream transformIs = new ByteArrayInputStream(exiBytes);
     ByteArrayOutputStream transformOs = new ByteArrayOutputStream();
     try {
-        transformEXI(exiFactory, transformIs, transformOs, xsltFileURL);
+      transformEXI(exiFactory, transformIs, transformOs, xsltFileURL);
     } catch (EXIException e) {
-        System.err.println("Error creating EXISource: " + e.getMessage());
-        fatalError = true;
+      System.err.println("Error creating EXISource: " + e.getMessage());
+      fatalError = true;
     } catch (TransformerException t) {
-        System.err.println("Error transforming EXI infoset: " + t.getMessage());
-        fatalError = true;
+      System.err.println("Error transforming EXI infoset: " + t.getMessage());
+      fatalError = true;
     } finally {
-        transformIs.close();
-        transformOs.close();
-        if (fatalError)
-            return 1;
+      transformIs.close();
+      transformOs.close();
+      if (fatalError)
+        return 1;
     }
 
     // If you need to also convert XML back into the native data format
@@ -246,21 +237,21 @@ public class HelloWorldExificient {
     ByteArrayInputStream unparseIs = new ByteArrayInputStream(transformOs.toByteArray());
     ByteArrayOutputStream unparseOs = new ByteArrayOutputStream();
     try {
-        unparseFromEXI(dp, exiFactory, unparseIs, unparseOs);
+      unparseFromEXI(dp, exiFactory, unparseIs, unparseOs);
     } catch (EXIException e) {
-        System.err.println("Error creating unparse EXISource: " + e.getMessage());
-        fatalError = true;
+      System.err.println("Error creating unparse EXISource: " + e.getMessage());
+      fatalError = true;
     } catch (SAXException s) {
-        System.err.println("SAX Error during unparse: " + s.getMessage());
-        fatalError = true;
+      System.err.println("SAX Error during unparse: " + s.getMessage());
+      fatalError = true;
     } catch (ParseUnparseException u) {
-        // We have already printed out the error messages in unparseFromEXI
-        fatalError = true;
+      // We have already printed out the error messages in unparseFromEXI
+      fatalError = true;
     } finally {
-        unparseIs.close();
-        unparseOs.close();
-        if (fatalError)
-            return 1;
+      unparseIs.close();
+      unparseOs.close();
+      if (fatalError)
+        return 1;
     }
 
     // if we get here, unparsing was successful.
@@ -274,98 +265,98 @@ public class HelloWorldExificient {
     r = new java.io.BufferedReader(new java.io.InputStreamReader(data, encoding));
     System.out.println("Unparsed data as text in encoding " + encoding + ":");
     while ((line = r.readLine()) != null) {
-        System.out.println(line);
+      System.out.println(line);
     }
 
     // If your data format was binary, then you can print it out as hex
     // just to get a look at it.
     System.out.println("Unparsed data as hex:");
     for (byte b : ba) {
-        int bi = b; // b could be negative, but we want the hex to look like
-            // it was unsigned.
-        bi = bi & 0xFF;
-        System.out.print(String.format("%02X ", bi));
+      int bi = b; // b could be negative, but we want the hex to look like
+      // it was unsigned.
+      bi = bi & 0xFF;
+      System.out.print(String.format("%02X ", bi));
     }
     System.out.println("");
     return 0;
+  }
+
+  public static void parseToEXI(DataProcessor dp, EXIFactory exiFactory, InputStream is, ByteArrayOutputStream os)
+    throws EXIException, IOException, ParseUnparseException {
+
+    InputSourceDataInputStream dis = Daffodil.newInputSourceDataInputStream(is);
+    EXIResult exiResult = new EXIResult(exiFactory); // throws EXIException
+    exiResult.setOutputStream(os); // throws EXIException and IOException
+
+    DaffodilParseXMLReader reader = dp.newXMLReaderInstance();
+    reader.setContentHandler(exiResult.getHandler());
+
+    //
+    // Do the parse
+    //
+    reader.parse(dis);
+
+    // Check for errors
+    //
+    ParseResult res = (ParseResult) reader.getProperty(DaffodilParseXMLReader.DAFFODIL_SAX_URN_PARSERESULT);
+    boolean err = res.isError();
+    if (err) {
+      // didn't parse the data. Must be diagnostic of some sort.
+      List<Diagnostic> diags = res.getDiagnostics();
+      for (Diagnostic d : diags) {
+        System.err.println(d.toString());
+      }
+      throw new ParseUnparseException("Error parsing input file");
+    }
+  }
+
+  public static void transformEXI(EXIFactory exiFactory, ByteArrayInputStream is, ByteArrayOutputStream os, URL xslt)
+    throws EXIException, TransformerException, IOException {
+
+    TransformerFactory tf = TransformerFactory.newInstance();
+    InputStream xsltFileURLStream = xslt.openStream(); // throws EXIException
+    StreamSource xsltSource = new StreamSource();
+    xsltSource.setInputStream(xsltFileURLStream);
+    Transformer tr = tf.newTransformer(xsltSource); // throws TransformerException
+
+    EXISource exiSource = new EXISource(exiFactory); // throws EXIException
+    InputSource inputSource = new InputSource(is);
+    exiSource.setInputSource(inputSource);
+    EXIResult exiResult = new EXIResult(exiFactory); // throws EXIException
+    exiResult.setOutputStream(os); // throws EXIException and IOException
+    tr.transform(exiSource, exiResult); // throws TransformerException
+  }
+
+  public static void unparseFromEXI(DataProcessor dp, EXIFactory exiFactory, ByteArrayInputStream is, ByteArrayOutputStream os)
+    throws EXIException, SAXException, IOException, ParseUnparseException {
+
+    java.nio.channels.WritableByteChannel wbc = java.nio.channels.Channels.newChannel(os);
+    DaffodilUnparseContentHandler unparseHandler = dp.newContentHandlerInstance(wbc);
+    InputSource unparseInputSource = new InputSource(is);
+
+    EXISource exiSource = new EXISource(exiFactory); // throws EXIException and IOException
+    XMLReader exiReader = exiSource.getXMLReader();
+    // Read the EXI content as a series of SAX events, which will
+    // drive the unparsing, converting the data back to its
+    // original format
+    exiReader.setContentHandler(unparseHandler);
+    try {
+      exiReader.parse(unparseInputSource); // throws SAXException and IOException
+    } catch (DaffodilUnparseErrorSAXException d) {
+      // do nothing, the UnparseResult contains the error information
     }
 
-    public static void parseToEXI(DataProcessor dp, EXIFactory exiFactory, InputStream is, ByteArrayOutputStream os)
-        throws EXIException, IOException, ParseUnparseException {
+    UnparseResult res2 = unparseHandler.getUnparseResult();
+    boolean err = res2.isError();
 
-        InputSourceDataInputStream dis = new InputSourceDataInputStream(is);
-        EXIResult exiResult = new EXIResult(exiFactory); // throws EXIException
-        exiResult.setOutputStream(os); // throws EXIException and IOException
-
-        DaffodilParseXMLReader reader = dp.newXMLReaderInstance();
-        reader.setContentHandler(exiResult.getHandler());
-
-        //
-        // Do the parse
-        //
-        reader.parse(dis);
-
-        // Check for errors
-        //
-        ParseResult res = (ParseResult) reader.getProperty(DaffodilParseXMLReader.DAFFODIL_SAX_URN_PARSERESULT());
-        boolean err = res.isError();
-        if (err) {
-            // didn't parse the data. Must be diagnostic of some sort.
-            List<Diagnostic> diags = res.getDiagnostics();
-            for (Diagnostic d : diags) {
-                System.err.println(d.getSomeMessage());
-            }
-            throw new ParseUnparseException("Error parsing input file");
-        }
+    if (err) {
+      // didn't unparse. Must be diagnostic of some sort.
+      List<Diagnostic> diags = res2.getDiagnostics();
+      for (Diagnostic d : diags) {
+        System.err.println(d.toString());
+      }
+      throw new ParseUnparseException("Error unparsing infoset");
     }
-
-    public static void transformEXI(EXIFactory exiFactory, ByteArrayInputStream is, ByteArrayOutputStream os, URL xslt)
-        throws EXIException, TransformerException, IOException {
-
-        TransformerFactory tf = TransformerFactory.newInstance();
-        InputStream xsltFileURLStream = xslt.openStream(); // throws EXIException
-        StreamSource xsltSource = new StreamSource();
-        xsltSource.setInputStream(xsltFileURLStream);
-        Transformer tr = tf.newTransformer(xsltSource); // throws TransformerException
-
-        EXISource exiSource = new EXISource(exiFactory); // throws EXIException
-        InputSource inputSource = new InputSource(is);
-        exiSource.setInputSource(inputSource);
-        EXIResult exiResult = new EXIResult(exiFactory); // throws EXIException
-        exiResult.setOutputStream(os); // throws EXIException and IOException
-        tr.transform(exiSource, exiResult); // throws TransformerException
-    }
-
-    public static void unparseFromEXI(DataProcessor dp, EXIFactory exiFactory, ByteArrayInputStream is, ByteArrayOutputStream os)
-        throws EXIException, SAXException, IOException, ParseUnparseException {
-
-        java.nio.channels.WritableByteChannel wbc = java.nio.channels.Channels.newChannel(os);
-        DaffodilUnparseContentHandler unparseHandler = dp.newContentHandlerInstance(wbc);
-        InputSource unparseInputSource = new InputSource(is);
-
-        EXISource exiSource = new EXISource(exiFactory); // throws EXIException and IOException
-        XMLReader exiReader = exiSource.getXMLReader();
-        // Read the EXI content as a series of SAX events, which will
-        // drive the unparsing, converting the data back to its
-        // original format
-        exiReader.setContentHandler(unparseHandler);
-        try {
-            exiReader.parse(unparseInputSource); // throws SAXException and IOException
-        } catch (DaffodilUnparseErrorSAXException d) {
-            // do nothing, the UnparseResult contains the error information
-        }
-
-        UnparseResult res2 = unparseHandler.getUnparseResult();
-        boolean err = res2.isError();
-
-        if (err) {
-            // didn't unparse. Must be diagnostic of some sort.
-            List<Diagnostic> diags = res2.getDiagnostics();
-            for (Diagnostic d : diags) {
-                System.err.println(d.getSomeMessage());
-            }
-            throw new ParseUnparseException("Error unparsing infoset");
-        }
-    }
+  }
 }
 

@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:hxw="http://example.com/dfdl/hexWords/"
-           targetNamespace="http://example.com/dfdl/hexWords/"
-           xmlns:dfdl="http://www.ogf.org/dfdl/dfdl-1.0/"
-           xmlns:fn="http://www.w3.org/2005/xpath-functions"
-           xmlns:daf="urn:ogf:dfdl:2013:imp:daffodil.apache.org:2018:ext">
+  xmlns:hxw="http://example.com/dfdl/hexWords/"
+  xmlns:dfdl="http://www.ogf.org/dfdl/dfdl-1.0/"
+  targetNamespace="http://example.com/dfdl/hexWords/"
+>
 
   <xs:include schemaLocation="org/apache/daffodil/xsd/DFDLGeneralFormat.dfdl.xsd"/>
 
@@ -13,9 +12,9 @@
     <xs:appinfo source="http://www.ogf.org/dfdl/">
 
       <dfdl:format ref="hxw:GeneralFormat"
-                   representation="binary" encoding="X-DFDL-HEX-LSBF" lengthKind="implicit"
-                   lengthUnits="bits" alignmentUnits="bits"
-                   byteOrder="littleEndian" bitOrder="leastSignificantBitFirst"/>
+        representation="binary" encoding="X-DFDL-HEX-LSBF" lengthKind="implicit"
+        lengthUnits="bits" alignmentUnits="bits"
+        byteOrder="littleEndian" bitOrder="leastSignificantBitFirst"/>
 
     </xs:appinfo>
   </xs:annotation>
@@ -80,8 +79,8 @@
           -->
         <xs:sequence>
           <xs:element name="len" dfdl:lengthKind="explicit"
-                      dfdl:length="4"
-                      dfdl:outputValueCalc='{ dfdl:valueLength(../text, "bits") idiv 4 }'>
+            dfdl:length="4"
+            dfdl:outputValueCalc='{ dfdl:valueLength(../text, "bits") idiv 4 }'>
             <xs:annotation>
               <xs:appinfo source="http://www.ogf.org/dfdl/">
                 <!-- zero as length is illegal - not well formed -->
@@ -95,14 +94,14 @@
             </xs:simpleType>
           </xs:element>
           <xs:element name="text" type="xs:string"
-                      dfdl:lengthKind="explicit" dfdl:length="{ ../len }"
-                      dfdl:lengthUnits="characters"/>
+            dfdl:lengthKind="explicit" dfdl:length="{ ../len }"
+            dfdl:lengthUnits="characters"/>
         </xs:sequence>
         <!--
           This skips a bad nibble by just providing an illegal element to absorb it.
           -->
         <xs:element name="illegal" dfdl:lengthKind="explicit"
-                    dfdl:length="4">
+          dfdl:length="4">
           <xs:simpleType>
             <xs:restriction base="xs:unsignedInt">
               <xs:maxExclusive value="0"/><!-- always fails for unsigned int. So these are never valid.-->

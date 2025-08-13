@@ -1,15 +1,15 @@
 name := "dfdl-self-descriptive-data"
 
-organization := "com.tresys"
+organization := "com.owlcyberdefense"
 
-version := "0.1.1"
+version := "0.2.0"
 
-Compile / run / mainClass := Some("com.tresys.tscv.TypedCSV")
+scalaVersion := "3.3.6"
 
-daffodilVersion := "3.11.0"
+Compile / run / mainClass := Some("com.owlcyberdefense.tscv.TypedCSV")
 
 libraryDependencies ++= Seq(
-  "org.apache.daffodil" %% "daffodil-japi" % daffodilVersion.value
+  "org.apache.daffodil" %% "daffodil-core" % daffodilVersion.value
 )
 
 enablePlugins(DaffodilPlugin)

@@ -19,10 +19,11 @@ import com.google.cloud.spring.pubsub.integration.inbound.PubSubInboundChannelAd
 import com.google.cloud.spring.pubsub.integration.outbound.PubSubMessageHandler;
 import com.google.cloud.spring.pubsub.support.BasicAcknowledgeablePubsubMessage;
 import com.google.cloud.spring.pubsub.support.GcpPubSubHeaders;
-import java.io.IOException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.daffodil.japi.InvalidUsageException;
+import org.apache.daffodil.api.exceptions.InvalidUsageException;
+import org.apache.daffodil.api.validation.ValidatorInitializationException;
+import org.apache.daffodil.api.validation.ValidatorNotRegisteredException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,6 +36,8 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.util.concurrent.ListenableFutureCallback;
+
+import java.io.IOException;
 
 /**
  * Publishes and subscribes to topics using channels adapters.
@@ -71,11 +74,16 @@ public class PubSubServer {
   @Value("${dfdl.definition.name}")
   String dfdlDefName;
 
-  @Autowired private DfdlService dfdlService;
-  @Autowired private FirestoreService firestoreService;
-  @Autowired private PubsubOutboundGateway messagingGateway;
+  @Autowired
+  private DfdlService dfdlService;
+  @Autowired
+  private FirestoreService firestoreService;
+  @Autowired
+  private PubsubOutboundGateway messagingGateway;
 
-  /** Returns a channel where the adapter sends the received messages. */
+  /**
+   * Returns a channel where the adapter sends the received messages.
+   */
   @Bean
   public MessageChannel inputChannel() {
     return new DirectChannel();
@@ -87,9 +95,9 @@ public class PubSubServer {
    */
   @Bean
   public PubSubInboundChannelAdapter inboundChannelAdapter(
-      @Qualifier("inputChannel") MessageChannel messageChannel, PubSubTemplate pubSubTemplate) {
+    @Qualifier("inputChannel") MessageChannel messageChannel, PubSubTemplate pubSubTemplate) {
     PubSubInboundChannelAdapter adapter =
-        new PubSubInboundChannelAdapter(pubSubTemplate, pubsubDataBinarySub);
+      new PubSubInboundChannelAdapter(pubSubTemplate, pubsubDataBinarySub);
     adapter.setOutputChannel(messageChannel);
     adapter.setAckMode(AckMode.MANUAL);
     adapter.setPayloadType(String.class);
@@ -113,18 +121,19 @@ public class PubSubServer {
 
         // Transform message using the dfdl definition.
         String messageConverted =
-            dfdlService.convertDataMessage((String) message.getPayload(), dfdlDef);
+          dfdlService.convertDataMessage((String) message.getPayload(), dfdlDef);
 
         // Republish the message in json format in a new topic
         messagingGateway.sendToPubsub(pubsubDataJsonTopic, messageConverted);
 
-      } catch (IOException | InvalidUsageException e) {
+      } catch (IOException | InvalidUsageException | ValidatorNotRegisteredException |
+               ValidatorInitializationException e) {
         e.printStackTrace();
       }
       BasicAcknowledgeablePubsubMessage originalMessage =
-          message
-              .getHeaders()
-              .get(GcpPubSubHeaders.ORIGINAL_MESSAGE, BasicAcknowledgeablePubsubMessage.class);
+        message
+          .getHeaders()
+          .get(GcpPubSubHeaders.ORIGINAL_MESSAGE, BasicAcknowledgeablePubsubMessage.class);
       originalMessage.ack();
     };
   }
@@ -139,22 +148,18 @@ public class PubSubServer {
   @ServiceActivator(inputChannel = "outputChannel")
   public MessageHandler messageSender(PubSubTemplate pubsubTemplate) {
     PubSubMessageHandler adapter = new PubSubMessageHandler(pubsubTemplate, GcpPubSubHeaders.TOPIC);
-    adapter.setPublishCallback(
-        new ListenableFutureCallback<String>() {
-          @Override
-          public void onFailure(Throwable throwable) {
-            LOGGER.info("There was an error sending the message.");
-          }
-
-          @Override
-          public void onSuccess(String result) {
-            LOGGER.info("Message was sent via the outbound channel adapter to a topic");
-          }
-        });
+    adapter.setSuccessCallback((originalMessage, message) -> {
+      LOGGER.info("Message was sent via the outbound channel adapter to a topic");
+    });
+    adapter.setFailureCallback((originalMessage, throwable) -> {
+      LOGGER.info("There was an error sending the message.");
+    });
     return adapter;
   }
 
-  /** Allows publishing messages to the spring output channel. */
+  /**
+   * Allows publishing messages to the spring output channel.
+   */
   @MessagingGateway(defaultRequestChannel = "outputChannel")
   public interface PubsubOutboundGateway {
     void sendToPubsub(@Header(GcpPubSubHeaders.TOPIC) String topic, String message);

@@ -2,8 +2,8 @@ name := "dfdl-pairs-transform"
 
 organization := "com.example"
 
-version := "0.1.1-SNAPSHOT"
+version := "0.2.0-SNAPSHOT"
 
-daffodilVersion := "3.11.0"
+scalaVersion := "3.3.6"
 
 enablePlugins(DaffodilPlugin)

@@ -19,11 +19,13 @@ import com.google.cloud.spring.data.firestore.Document;
 @Document(collectionName = "dfdl-schemas")
 public class DfdlDef {
 
-  @DocumentId String name;
+  @DocumentId
+  String name;
 
   String definition;
 
-  public DfdlDef() {}
+  public DfdlDef() {
+  }
 
   public DfdlDef(String name, String definition) {
     this.name = name;

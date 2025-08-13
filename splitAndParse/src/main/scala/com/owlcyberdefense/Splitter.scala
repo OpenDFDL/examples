@@ -1,10 +1,9 @@
 package com.owlcyberdefense
 
-import org.apache.daffodil.sapi.Diagnostic
-import org.apache.daffodil.sapi.io.InputSourceDataInputStream
-
 import java.io.InputStream
 import java.net.URL
+
+import org.apache.daffodil.api.{ Daffodil, Diagnostic, InputSourceDataInputStream }
 
 /**
  * Splits data into byte arrays based on a splitter schema which is intended
@@ -21,32 +20,10 @@ class Splitter(val schemaFileURL: URL, val rootName: String, val rootNS: String)
 
   assert(schemaFileURL ne null)
 
-  private lazy val (proc, compilationWarnings: Seq[Diagnostic]) = SchemaCompiler.initDP(schemaFileURL, rootName, rootNS)
+  private lazy val (proc, compilationWarnings: Seq[Diagnostic]) =
+    SchemaCompiler.initDP(schemaFileURL, rootName, rootNS)
 
   def init(): Seq[Diagnostic] = compilationWarnings
-
-  private def split(dis: InputSourceDataInputStream) =
-    proc.parse(dis)
-
-  /**
-   * Private but exposed as package private for testing purposes only.
-   */
-  private [owlcyberdefense] def toResultIterator(inputStream: InputStream): Iterator[Processor.Result] = {
-    val dis = new InputSourceDataInputStream(inputStream)
-
-    Stream.continually( split(dis) ).takeWhile{
-      r =>
-        val keepGoing = {
-          if (r.isProcessingError && !dis.hasData)
-            false // normal termination - we got error at end of data
-          else {
-            assert(!r.isProcessingError) // should only get proc-error at end of data
-            true
-          }
-        }
-        keepGoing
-    }.toIterator
-  }
 
   /**
    * Primary method for obtaining series of split results which are byte arrays.
@@ -65,6 +42,35 @@ class Splitter(val schemaFileURL: URL, val rootName: String, val rootNS: String)
     // a stream other than stored lengths. E.g., one example is textual data surrounded by markers like
     // the ascii start-of-message (SOM) and end-of-message (EOM) characters.
     //
-    toResultIterator(inputStream).filter(r => !r.isValidationError).map{ r => proc.unparse(r.infoset) }
+    toResultIterator(inputStream).filter(r => !r.isValidationError).map { r =>
+      proc.unparse(r.infoset)
+    }
   }
+
+  /**
+   * Private but exposed as package private for testing purposes only.
+   */
+  private[owlcyberdefense] def toResultIterator(
+    inputStream: InputStream
+  ): Iterator[Processor.Result] = {
+    val dis = Daffodil.newInputSourceDataInputStream(inputStream)
+
+    LazyList
+      .continually(split(dis))
+      .takeWhile { r =>
+        val keepGoing = {
+          if (r.isProcessingError && !dis.hasData)
+            false // normal termination - we got error at end of data
+          else {
+            assert(!r.isProcessingError) // should only get proc-error at end of data
+            true
+          }
+        }
+        keepGoing
+      }
+      .iterator
+  }
+
+  private def split(dis: InputSourceDataInputStream) =
+    proc.parse(dis)
 }

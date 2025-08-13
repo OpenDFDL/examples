@@ -17,57 +17,61 @@ import com.google.cloud.bigtable.admin.v2.BigtableTableAdminClient;
 import com.google.cloud.bigtable.admin.v2.BigtableTableAdminSettings;
 import com.google.cloud.bigtable.data.v2.BigtableDataClient;
 import com.google.cloud.bigtable.data.v2.BigtableDataSettings;
-import java.io.IOException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 
+import java.io.IOException;
+
 @SpringBootApplication
 public class BigtableServer {
 
-  @Value("${spring.cloud.gcp.project-id}") String projectId;
-  @Value("${bigtable.instance-id}") String instanceId;
-  @Value("${bigtable.table-id}") String tableId;
+  @Value("${spring.cloud.gcp.project-id}")
+  String projectId;
+  @Value("${bigtable.instance-id}")
+  String instanceId;
+  @Value("${bigtable.table-id}")
+  String tableId;
 
   @Bean
   ApplicationRunner bigtableServerApplicationRunner(Environment environment) {
     return args -> {
       System.out.println("Content of application.properties: "
-          + "instance-id="
-          + environment.getProperty("bigtable.instance-id")
-          + " table-id="
-          + environment.getProperty("bigtable.table-id"));
+        + "instance-id="
+        + environment.getProperty("bigtable.instance-id")
+        + " table-id="
+        + environment.getProperty("bigtable.table-id"));
     };
   }
 
   @Bean
   public BigtableDataSettings getBigtableDataSetting() {
     return BigtableDataSettings.newBuilder()
-        .setProjectId(projectId)
-        .setInstanceId(instanceId).build();
+      .setProjectId(projectId)
+      .setInstanceId(instanceId).build();
   }
 
   @Bean
   public BigtableDataClient getBigtableClient(BigtableDataSettings bigtableDataSettings)
-      throws IOException {
+    throws IOException {
     return BigtableDataClient.create(bigtableDataSettings);
   }
 
   @Bean
   public BigtableTableAdminSettings getBigtableAdminSettings()
-      throws IOException {
+    throws IOException {
     return BigtableTableAdminSettings.newBuilder()
-        .setProjectId(projectId)
-        .setInstanceId(instanceId)
-        .build();
+      .setProjectId(projectId)
+      .setInstanceId(instanceId)
+      .build();
   }
 
   @Bean
   public BigtableTableAdminClient getBigtableAdminClient(
-      BigtableTableAdminSettings bigtableTableAdminSettings) throws IOException {
-     return BigtableTableAdminClient.create(bigtableTableAdminSettings);
+    BigtableTableAdminSettings bigtableTableAdminSettings) throws IOException {
+    return BigtableTableAdminClient.create(bigtableTableAdminSettings);
   }
 
   @Bean
