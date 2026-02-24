@@ -1,13 +1,13 @@
-name := "dfdl-hexWords"
+val root = (project in file("."))
+  .settings(
+    name := "dfdl-hexWords",
 
-organization := "com.owlcyberdefense"
+    organization := "com.owlcyberdefense",
 
-version := "0.1.0"
+    version := "0.1.0",
 
-scalaVersion := "3.3.6"
-
-libraryDependencies ++= Seq(
-  "org.apache.daffodil" %% "daffodil-core" % daffodilVersion.value
-)
-
-enablePlugins(DaffodilPlugin)
+    libraryDependencies ++= Seq(
+      "org.apache.daffodil" %% "daffodil-core" % daffodilVersion.value
+    )
+  )
+  .daffodilProject()
