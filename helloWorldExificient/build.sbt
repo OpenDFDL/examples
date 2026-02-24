@@ -1,20 +1,21 @@
-name := "dfdl-helloworldexificient"
+val root = (project in file("."))
+  .settings(
+    name := "dfdl-helloworldexificient",
 
-organization := "com.owlcyberdefense"
+    organization := "com.owlcyberdefense",
 
-version := "0.2.0"
+    version := "0.2.0",
 
-scalaVersion := "3.3.6"
-// People use this project to study what the dependencies actually are needed
-// so having them put into lib_managed is helpful.
-retrieveManaged := true
+    // People use this project to study what the dependencies actually are needed
+    // so having them put into lib_managed is helpful.
+    retrieveManaged := true,
 
-Compile / run / mainClass := Some("HelloWorldExificient")
+    Compile / run / mainClass := Some("HelloWorldExificient"),
 
-libraryDependencies ++= Seq(
-  "org.apache.daffodil" %% "daffodil-core" % daffodilVersion.value,
-  "jaxen" % "jaxen" % "1.2.0",
-  "com.siemens.ct.exi" % "exificient" % "1.0.4"
-)
-
-enablePlugins(DaffodilPlugin)
+    libraryDependencies ++= Seq(
+      "org.apache.daffodil" %% "daffodil-core" % daffodilVersion.value,
+      "jaxen" % "jaxen" % "1.2.0",
+      "com.siemens.ct.exi" % "exificient" % "1.0.4"
+    )
+  )
+  .daffodilProject()

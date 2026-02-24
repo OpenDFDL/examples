@@ -1,11 +1,11 @@
-name := "dfdl-superexp"
+val root = (project in file("."))
+  .settings(
+    name := "dfdl-superexp",
 
-organization := "com.example"
+    organization := "com.example",
 
-version := "0.2.0-SNAPSHOT"
+    version := "0.2.0-SNAPSHOT",
 
-scalaVersion := "3.3.6"
-
-enablePlugins(DaffodilPlugin)
-
-daffodilFlatLayout := true
+    daffodilFlatLayout := true
+  )
+  .daffodilProject()

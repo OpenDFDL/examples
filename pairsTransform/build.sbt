@@ -1,9 +1,9 @@
-name := "dfdl-pairs-transform"
+val root = (project in file("."))
+  .settings(
+    name := "dfdl-pairs-transform",
 
-organization := "com.example"
+    organization := "com.example",
 
-version := "0.2.0-SNAPSHOT"
-
-scalaVersion := "3.3.6"
-
-enablePlugins(DaffodilPlugin)
+    version := "0.2.0-SNAPSHOT"
+  )
+  .daffodilProject()

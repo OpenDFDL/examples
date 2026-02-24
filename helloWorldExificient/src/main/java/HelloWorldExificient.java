@@ -178,6 +178,8 @@ public class HelloWorldExificient {
     } catch (ParseUnparseException p) {
       // We have already printed out the error messages in parseToEXI
       fatalError = true;
+    } catch (SAXException e) {
+      fatalError = true;
     } finally {
       parseOs.close();
       parseIs.close();
@@ -282,7 +284,7 @@ public class HelloWorldExificient {
   }
 
   public static void parseToEXI(DataProcessor dp, EXIFactory exiFactory, InputStream is, ByteArrayOutputStream os)
-    throws EXIException, IOException, ParseUnparseException {
+          throws EXIException, IOException, ParseUnparseException, SAXException {
 
     InputSourceDataInputStream dis = Daffodil.newInputSourceDataInputStream(is);
     EXIResult exiResult = new EXIResult(exiFactory); // throws EXIException
